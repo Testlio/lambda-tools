@@ -11,7 +11,9 @@ if (!String.prototype.camelCase) {
 }
 
 if (!String.prototype.sanitise) {
-    String.prototype.sanitise = function() {
-        return this.replace(/[^-0-9a-zA-Z]/g, '-');
+    String.prototype.sanitise = function(delimiter) {
+        delimiter = delimiter || '-';
+        let re = new RegExp('[^' + delimiter + '0-9a-zA-Z]', 'g');
+        return this.replace(re, delimiter);
     }
 }

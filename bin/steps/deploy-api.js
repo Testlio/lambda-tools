@@ -1,5 +1,6 @@
 "use strict";
 
+require('../helpers/string_additions');
 const fs        = require('fs');
 const fsx       = require('../helpers/fs_additions');
 const colors    = require('colors');
@@ -42,22 +43,34 @@ module.exports = function(program, configuration, stackOutputs, callback) {
             gateway.getRestApis({}, function(err, data) {
                 if (err) return callback(err);
 
+                let stageName = program.stage.sanitise('_');
                 let apis = data.items;
                 let matchingAPI = apis.find(function(api) {
                     return api.name == gatewayName;
                 });
 
+                let command;
                 if (!matchingAPI) {
                     // No existing API Gateway, create new
-                    cp.execSync(`cd "${configuration.api.importer}" && ./aws-api-import.sh --deploy ${program.stage} --create "${configuration.api.deployment}"`);
+                    command = `cd "${configuration.api.importer}" &&
+                    ./aws-api-import.sh --deploy "${stageName}" --create "${configuration.api.deployment}"`;
                 } else {
                     // Existing API Gateway, update it
-                    cp.execSync(`cd "${configuration.api.importer}" && ./aws-api-import.sh --deploy ${program.stage} --update ${matchingAPI.id} "${configuration.api.deployment}"`);
+                    command = `cd "${configuration.api.importer}" &&
+                    ./aws-api-import.sh --deploy "${stageName}" --update ${matchingAPI.id} "${configuration.api.deployment}"`;
                 }
 
-                console.log('\tDone'.green);
+                cp.exec(command, function(error, stdout, stderr) {
+                    if (error) {
+                        console.error("Failed to deploy API", error);
+                        console.error(stdout);
+                        console.error(stderr);
+                    } else {
+                        console.log('\tDone'.green);
+                    }
 
-                callback();
+                    callback(error);
+                });
             });
         }
     } catch (error) {
