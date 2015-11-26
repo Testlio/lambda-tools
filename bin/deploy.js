@@ -16,7 +16,6 @@ const prompt        = require('readline-sync');
 const colors        = require('colors');
 const fs            = require('fs');
 const AWS           = require('aws-sdk');
-const sync          = require('synchronize');
 const merge         = require('deepmerge');
 const async         = require('async');
 
