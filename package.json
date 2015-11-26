@@ -30,7 +30,6 @@
     "node-zip": "^1.1.1",
     "readline-sync": "^1.2.21",
     "rimraf": "^2.4.4",
-    "synchronize": "^0.9.14",
     "uglify-js": "^2.6.1"
   }
 }
