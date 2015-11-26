@@ -1,0 +1,16 @@
+{
+  "name": "example-service",
+  "version": "1.0.0",
+  "description": "Minimal Lambda backed microservice example",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "author": "dev@testlio.com",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "lambda-tools": "testlio/lambda-tools"
+  }
+}

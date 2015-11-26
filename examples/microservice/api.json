@@ -1,0 +1,59 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Example microservice",
+        "description": "A minimal example of a Lambda backed microservice",
+        "contact": {
+            "name": "Testlio Dev Team"
+        },
+        "license": {
+            "name": "ISC"
+        }
+    },
+    "schemes": [ "https" ],
+    "consumes": [ "application/json" ],
+    "produces": [ "application/json" ],
+    "paths": {
+        "/": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Greetings said",
+                        "schema": {
+                            "$ref": "#/definitions/String"
+                        }
+                    }
+                },
+                "x-amazon-apigateway-auth": {
+                    "type": "none"
+                },
+                "x-amazon-apigateway-integration": {
+                    "type": "aws",
+                    "uri": "$lEndpoint",
+                    "credentials": "$IamRoleArnApiGateway",
+                    "httpMethod": "POST",
+                    "requestParameters": {
+                        "integration.request.header.x-oauth": "method.request.header.Authorization"
+                    },
+                    "requestTemplates": {
+                        "application/json": "{\"authorization\": \"$input.params('Authorization')\", \"path\": \"$context.resourcePath\"}"
+                    },
+                    "responses": {
+                        "default": {
+                            "statusCode": "200",
+                            "responseTemplates": {
+                                "application/json": ""
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "String": {
+            "type": "string"
+        }
+    }
+}

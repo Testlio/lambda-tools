@@ -1,0 +1,19 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "ExampleService",
+    "Parameters": {
+        "aaProjectName": {
+            "Type": "String",
+            "Default": "Example-Service",
+            "AllowedValues": [
+                "Example-Service"
+            ]
+        },
+        "aaStage": {
+            "Type": "String",
+            "Default": "dev"
+        }
+    },
+    "Resources": {},
+    "Outputs": {}
+}
