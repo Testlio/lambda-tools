@@ -18,6 +18,10 @@ deploy -n project-name [-s stage-to-deploy] [-r aws-region-to-deploy-to]
 
 Additional arguments can be looked up by calling `deploy -h`
 
+### Authentication
+
+`deploy` assumes you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
+
 ### Notes about microservice structure
 
 In order for the `deploy` script to work properly, the following structure is assumed for a microservice
