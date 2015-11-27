@@ -1,5 +1,5 @@
 {
-  "name": "lambda-tools",
+  "name": "@testlio/lambda-tools",
   "version": "1.0.0",
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
@@ -15,7 +15,10 @@
     "aws",
     "deployment"
   ],
-  "author": "dev@testlio.com",
+  "author": {
+      "email": "dev@testlio.com",
+      "name": "Testlio"
+  },
   "license": "ISC",
   "dependencies": {
     "async": "^1.5.0",
