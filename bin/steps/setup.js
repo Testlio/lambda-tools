@@ -10,6 +10,7 @@ const cp            = require('child_process');
 const fs            = require('fs');
 const async         = require('async');
 const AWS           = require('aws-sdk');
+const merge         = require('deepmerge');
 
 function checkDependencies() {
     try {
@@ -116,7 +117,14 @@ module.exports = function(program, workingDirectory, callback) {
                     // Prime the CF template
                     let stackCF = fsx.readJSONFileSync(path.join(workingDirectory, 'templates', 'cf.json'));
 
-                    // Project name parameter can be set (along with stage)
+                    // Merge with the template found in the service
+                    let customCF = path.join(root, 'cf.json');
+                    if (fsx.fileExists(customCF)) {
+                        let customStackCF = fsx.readJSONFileSync(customCF);
+                        stackCF = merge(stackCF, customStackCF);
+                    }
+
+                    // Project name parameter need to be set (as they include an allowedValues listing)
                     stackCF["Parameters"]["aaProjectName"] = {
                         "Type": "String",
                         "Default": program.projectName,
