@@ -4,7 +4,7 @@
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
   "bin": {
-    "deploy": "bin/deploy.js"
+    "deploy": "bin/deploy/deploy.js"
   },
   "repository": {
     "type": "git",

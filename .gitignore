@@ -1,5 +1,5 @@
 # Files generated during deployment
-bin/lambda_stage/*
+bin/deploy/lambda_stage/*
 
 # Logs
 logs
