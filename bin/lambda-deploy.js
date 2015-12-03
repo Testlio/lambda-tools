@@ -90,7 +90,7 @@ program.flatEnvironment = Object.keys(program.environment).reduce(function(curre
 //
 //  Actual content of the script
 //
-let workingDirectory = path.resolve(__dirname);
+let workingDirectory = path.join(path.resolve(__dirname), 'deploy');
 
 async.waterfall(
     [
