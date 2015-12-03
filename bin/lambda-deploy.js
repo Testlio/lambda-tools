@@ -1,14 +1,12 @@
-#!/usr/bin/env node
-
 "use strict";
 
-require('./helpers/string_additions');
+require('./deploy/helpers/string_additions');
 
-const setup             = require('./steps/setup');
-const processLambdas    = require('./steps/process-lambdas');
-const deployStack       = require('./steps/deploy-stack');
-const getStackOutputs   = require('./steps/get-outputs-stack');
-const deployAPI         = require('./steps/deploy-api');
+const setup             = require('./deploy/steps/setup');
+const processLambdas    = require('./deploy/steps/process-lambdas');
+const deployStack       = require('./deploy/steps/deploy-stack');
+const getStackOutputs   = require('./deploy/steps/get-outputs-stack');
+const deployAPI         = require('./deploy/steps/deploy-api');
 
 const path          = require('path');
 const program       = require('commander');
@@ -58,7 +56,6 @@ function parseEnvironment(value) {
 //
 
 program
-    .version('0.1')
     .option('-n, --project-name <name>', 'Project name')
     .option('-s, --stage <stage>', 'Stage name')
     .option('-r, --region <region>', 'Region')
