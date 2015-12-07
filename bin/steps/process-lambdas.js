@@ -13,6 +13,7 @@ const colors        = require('colors');
 const path          = require('path');
 const browserify    = require('browserify');
 const babelify      = require('babelify');
+const envify        = require('envify');
 const presets       = require('babel-preset-es2015');
 const uglify        = require('uglify-js');
 const dot           = require('dot');
@@ -75,6 +76,7 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
         });
 
         bundler.exclude('aws-sdk');
+
         bundler.transform(babelify, {
             presets: [presets],
             compact: false,
@@ -82,11 +84,16 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
             ignore: /\/node_modules\/(lambda_deployment|\.bin)\/.*/
         });
 
+        let env = {
+            _: 'purge'
+        };
+        _.merge(env, program.environment);
+        bundler.transform(envify, env);
+
         // Build the ZIP file we need
         let zip = new Zip();
-        zip.file('.env', program.flatEnvironment);
 
-        console.log('\tBrowserifying');
+        console.log('\tBrowserifying/Envifying');
         bundler.bundle(function(err, bundled) {
             if (err) {
                 console.error("\tFailed to compress code".red, error);

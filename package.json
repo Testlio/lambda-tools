@@ -29,6 +29,7 @@
     "colors": "^1.1.2",
     "commander": "^2.9.0",
     "dot": "^1.0.3",
+    "envify": "^3.4.0",
     "lodash": "^3.10.1",
     "node-zip": "^1.1.1",
     "readline-sync": "^1.2.21",
