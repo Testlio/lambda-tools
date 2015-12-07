@@ -11,7 +11,6 @@ const fs            = require('fs');
 const fsx           = require('../helpers/fs_additions');
 const colors        = require('colors');
 const path          = require('path');
-const merge         = require('deepmerge');
 const browserify    = require('browserify');
 const babelify      = require('babelify');
 const presets       = require('babel-preset-es2015');
@@ -19,6 +18,7 @@ const uglify        = require('uglify-js');
 const dot           = require('dot');
 const Zip           = require('node-zip');
 const async         = require('async');
+const _             = require('lodash');
 
 //
 //  Processing helper, results in an object that can be used to
@@ -34,10 +34,10 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
 
     // Load in the cloudformation config (if any)
     let lambdaCustomCF = path.join(lambdaPath, 'cf.json');
-    let config = baseResource;
+    let config = _.clone(baseResource, true);
 
     if (fsx.fileExists(lambdaCustomCF)) {
-        config = merge(baseResource, fsx.readJSONFileSync(lambdaCustomCF));
+        _.merge(config, fsx.readJSONFileSync(lambdaCustomCF));
     }
 
     let handler = config["Properties"]["Handler"].split('.', 1) + '';

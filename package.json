@@ -16,8 +16,8 @@
     "deployment"
   ],
   "author": {
-      "email": "dev@testlio.com",
-      "name": "Testlio"
+    "email": "dev@testlio.com",
+    "name": "Testlio"
   },
   "license": "ISC",
   "dependencies": {
@@ -28,8 +28,8 @@
     "browserify": "^12.0.1",
     "colors": "^1.1.2",
     "commander": "^2.9.0",
-    "deepmerge": "^0.2.10",
     "dot": "^1.0.3",
+    "lodash": "^3.10.1",
     "node-zip": "^1.1.1",
     "readline-sync": "^1.2.21",
     "rimraf": "^2.4.4",
