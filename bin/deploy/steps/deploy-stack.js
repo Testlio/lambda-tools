@@ -5,7 +5,7 @@
 //  and zipped up Lambda functions that accompany it
 //
 
-const fsx           = require('../helpers/fs_additions');
+const fsx           = require('../../helpers/fs_additions');
 const path          = require('path');
 const AWS           = require('aws-sdk');
 const async         = require('async');

@@ -8,7 +8,7 @@
 
 require('../helpers/string_additions');
 const fs            = require('fs');
-const fsx           = require('../helpers/fs_additions');
+const fsx           = require('../../helpers/fs_additions');
 const colors        = require('colors');
 const path          = require('path');
 const merge         = require('deepmerge');
