@@ -40,7 +40,6 @@
     "readline-sync": "^1.2.21",
     "rimraf": "^2.4.4",
     "swagger-parser": "^3.3.0",
-    "uglify-js": "^2.6.1",
-    "xregexp": "^3.0.0"
+    "uglify-js": "^2.6.1"
   }
 }

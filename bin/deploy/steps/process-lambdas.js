@@ -9,7 +9,6 @@
 require('../helpers/string_additions');
 const fs            = require('fs');
 const fsx           = require('../../helpers/fs_additions');
-const colors        = require('colors');
 const path          = require('path');
 const merge         = require('deepmerge');
 const browserify    = require('browserify');
@@ -27,20 +26,20 @@ const async         = require('async');
 //  { name: ..., output: ..., resource: ... }
 //
 function processLambda(program, configuration, baseResource, outputTemplate, lambdaPath, callback) {
-    let name = path.basename(lambdaPath);
+    const name = path.basename(lambdaPath);
     let camelName = name.toCamelCase();
     camelName = camelName.charAt(0).toLowerCase() + camelName.substring(1);
     console.log(`Processing "${name}" (${camelName})`);
 
     // Load in the cloudformation config (if any)
-    let lambdaCustomCF = path.join(lambdaPath, 'cf.json');
+    const lambdaCustomCF = path.join(lambdaPath, 'cf.json');
     let config = baseResource;
 
     if (fsx.fileExists(lambdaCustomCF)) {
         config = merge(baseResource, fsx.readJSONFileSync(lambdaCustomCF));
     }
 
-    let handler = config["Properties"]["Handler"].split('.', 1) + '';
+    const handler = config["Properties"]["Handler"].split('.', 1) + '';
 
     // Build the result object for this Lambda
     config["Properties"]["Code"] = {
@@ -48,7 +47,7 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
         "S3Key": configuration.bucket.directory + '/' + name + '.zip'
     };
 
-    let result = {
+    const result = {
         name: camelName,
         output: JSON.parse(outputTemplate({name: camelName})),
         resource: config
@@ -56,12 +55,12 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
 
     // Compress and zip the code
     if (!program.dryRun && !program.skipStack) {
-        let handlerFileName = handler + '.js';
+        const handlerFileName = handler + '.js';
         console.log("\tEntry point", handlerFileName);
-        let handlerFile = path.join(lambdaPath, handlerFileName);
-        let bundledFile = path.join(configuration.directories.staging, handler + '.bundled.js');
+        const handlerFile = path.join(lambdaPath, handlerFileName);
+        const bundledFile = path.join(configuration.directories.staging, handler + '.bundled.js');
 
-        let bundler = new browserify(handlerFile, {
+        const bundler = new browserify(handlerFile, {
             basedir: lambdaPath,
             standalone: handler,
             browserField: false,
@@ -83,20 +82,20 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
         });
 
         // Build the ZIP file we need
-        let zip = new Zip();
+        const zip = new Zip();
         zip.file('.env', program.flatEnvironment);
 
         console.log('\tBrowserifying');
         bundler.bundle(function(err, bundled) {
             if (err) {
-                console.error("\tFailed to compress code".red, error);
+                console.error("\tFailed to compress code".red, err);
                 return callback(err);
             }
 
             fs.writeFileSync(bundledFile, bundled);
 
             console.log('\tMinifying');
-            let minified = uglify.minify(bundledFile, {
+            const minified = uglify.minify(bundledFile, {
                 mangle: false,
                 compress: {}
             }).code;
@@ -133,19 +132,19 @@ module.exports = function(program, configuration, callback) {
         return;
     }
 
-    let lambdas = fsx.getDirectories(configuration.directories.lambdas).map(function(lambda) {
-        return function(callback) {
-            processLambda(program, configuration, lambdaCF, lambdaOutputTemplate, lambda, callback);
+    const lambdas = fsx.getDirectories(configuration.directories.lambdas).map(function(lambda) {
+        return function(cb) {
+            processLambda(program, configuration, lambdaCF, lambdaOutputTemplate, lambda, cb);
         };
     });
 
     async.series(lambdas, function(err, results) {
         if (err) return callback(err);
 
-        for (let result of results) {
+        for (const result of results) {
             stackCF["Resources"][result.name] = result.resource;
 
-            let outputName = 'l' + result.name.charAt(0).toUpperCase() + result.name.substring(1);
+            const outputName = 'l' + result.name.charAt(0).toUpperCase() + result.name.substring(1);
             stackCF["Outputs"][outputName] = result.output;
         }
 

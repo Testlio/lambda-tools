@@ -14,10 +14,10 @@ module.exports = {
     },
 
     base64Encode: function(obj) {
-        return btoa(obj);
+        return new Buffer(obj).toString('base64');
     },
 
     base64Decode: function(string) {
-        return atob(string);
+        return new Buffer(string, 'base64').toString('utf8');
     }
 };

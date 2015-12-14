@@ -1,10 +1,8 @@
 "use strict";
 
-const fs = require('fs');
 const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
-const colors = require('colors');
 const _ = require('lodash');
 
 const fsx = require('./helpers/fs_additions');
@@ -44,13 +42,13 @@ swagger.validate(program.apiFile, function(err, api) {
 
     // Our sort-of "middleware" for handling the Lambda integration
     // within the koa-router middleware
-    let integrator = Integration(api);
+    const integrator = Integration(api);
 
-    for (let p in api.paths) {
-        let methods = api.paths[p];
-        for (let method in methods) {
+    for (const p in api.paths) {
+        const methods = api.paths[p];
+        for (const method in methods) {
             // Convert path to be koa-router suitable (variables are listed differently)
-            let parsedPath = p.replace(/\{([^\}\/]*)\}/g, ':$1');
+            const parsedPath = p.replace(/\{([^\}\/]*)\}/g, ':$1');
 
             // We treat the router as a means to determine the correct Lambda
             // function and path, it doesn't actually execute the Lambda (which
@@ -76,10 +74,10 @@ swagger.validate(program.apiFile, function(err, api) {
                     }
 
                     // There might be a custom configuration in that folder
-                    let configurationFile = path.join(lambdaPath, 'cf.json');
+                    const configurationFile = path.join(lambdaPath, 'cf.json');
                     let handler = 'index.handler';
                     if (fsx.fileExists(configurationFile)) {
-                        let conf = fsx.readJSONFileSync(configurationFile);
+                        const conf = fsx.readJSONFileSync(configurationFile);
                         handler = _.get(conf, ['Properties', 'Handler'], handler);
                         context.memoryLimitInMB = _.get(conf, ['Properties', 'MemorySize'], context.memoryLimitInMB);
                         context.timeout = _.get(conf, ['Properties', 'Timeout'], context.timeout);
@@ -88,7 +86,7 @@ swagger.validate(program.apiFile, function(err, api) {
                     lambdaPath = path.resolve(lambdaPath, handler);
                 }
 
-                let integration = yield integrator.bind(this);
+                const integration = yield integrator.bind(this);
 
                 // Extend context to give it the necessary functions
                 // (done, fail, succeed, timeRemainingInMillis)
@@ -96,7 +94,7 @@ swagger.validate(program.apiFile, function(err, api) {
                 context = _.merge(context, integration.context);
                 context.awsRequestId = context.requestId;
 
-                let result = yield Execution.bind(this, lambdaPath, integration.event, context);
+                const result = yield Execution.bind(this, lambdaPath, integration.event, context);
                 console.log('Result', result);
 
                 this.status = 200;

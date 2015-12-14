@@ -12,7 +12,6 @@ const path          = require('path');
 const program       = require('commander');
 const prompt        = require('readline-sync');
 const colors        = require('colors');
-const fs            = require('fs');
 const AWS           = require('aws-sdk');
 const async         = require('async');
 
@@ -22,7 +21,7 @@ const async         = require('async');
 
 function parseEnvironment(value) {
     // Split on unescaped commas first
-    let pairs = [];
+    const pairs = [];
 
     let previousIndex = 0;
     value.replace(/(\\)?,/g, function(match, slash, index) {
@@ -36,15 +35,15 @@ function parseEnvironment(value) {
     pairs.push(value.substring(previousIndex));
 
     // Then split all the pairs on unescaped = signs
-    let result = {};
+    const result = {};
     pairs.forEach(function(pair) {
-        let match = pair.match(/(?:[^\\])=/);
+        const match = pair.match(/(?:[^\\])=/);
 
         if (match) {
-            let key = pair.substring(0, match.index + 1).replace(/\\(.)/g, "$1");
-            let value = pair.substring(match.index + 2).replace(/\\(.)/g, "$1");
+            const key = pair.substring(0, match.index + 1).replace(/\\(.)/g, "$1");
+            const val = pair.substring(match.index + 2).replace(/\\(.)/g, "$1");
 
-            result[key] = value;
+            result[key] = val;
         }
     });
 
@@ -90,7 +89,7 @@ program.flatEnvironment = Object.keys(program.environment).reduce(function(curre
 //
 //  Actual content of the script
 //
-let workingDirectory = path.join(path.resolve(__dirname), 'deploy');
+const workingDirectory = path.join(path.resolve(__dirname), 'deploy');
 
 async.waterfall(
     [
@@ -101,41 +100,41 @@ async.waterfall(
             });
         },
 
-        function(program, configuration, callback) {
+        function(prog, configuration, callback) {
             console.log('Processing Lambdas\n'.underline);
-            processLambdas(program, configuration, function(err) {
-                callback(err, program, configuration);
+            processLambdas(prog, configuration, function(err) {
+                callback(err, prog, configuration);
             });
         },
 
-        function(program, configuration, callback) {
-            if (program.skipStack) {
+        function(prog, configuration, callback) {
+            if (prog.skipStack) {
                 console.log('Skipping stack update\n'.underline);
-                callback(null, program, configuration);
+                callback(null, prog, configuration);
             } else {
                 console.log('Updating stack\n'.underline);
-                deployStack(program, configuration, function(err) {
-                    callback(err, program, configuration);
+                deployStack(prog, configuration, function(err) {
+                    callback(err, prog, configuration);
                 });
             }
         },
 
-        function(program, configuration, callback) {
+        function(prog, configuration, callback) {
             console.log('Grabbing stack details\n'.underline);
-            getStackOutputs(program, configuration, function(err, outputs) {
-                callback(err, program, configuration, outputs);
+            getStackOutputs(prog, configuration, function(err, outputs) {
+                callback(err, prog, configuration, outputs);
             });
         },
 
-        function(program, configuration, stackOutputs, callback) {
+        function(prog, configuration, stackOutputs, callback) {
             console.log('Deploying API\n'.underline);
-            deployAPI(program, configuration, stackOutputs, function(err) {
-                callback(err, program, configuration);
+            deployAPI(prog, configuration, stackOutputs, function(err) {
+                callback(err, prog, configuration);
             });
         }
     ],
 
-    function(error, result) {
+    function(error) {
         if (!error) {
             console.log('\nDeployed - ' + '#lambdahype'.rainbow);
         } else {

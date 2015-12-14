@@ -4,7 +4,6 @@ const _ = require('lodash');
 const JSONPath = require('jsonpath');
 const UUID = require('node-uuid');
 const util = require('../helpers/api-gateway-util');
-const XRegExp = require('xregexp');
 
 //
 //  Middleware that creates populates the event property
@@ -17,20 +16,20 @@ const XRegExp = require('xregexp');
 
 module.exports = function (apiSpec) {
     return function *() {
-        let path = ['paths', this.apiPath, this.request.method.toLowerCase(), 'x-amazon-apigateway-integration'];
-        let definition = _.get(apiSpec, path);
+        const path = ['paths', this.apiPath, this.request.method.toLowerCase(), 'x-amazon-apigateway-integration'];
+        const definition = _.get(apiSpec, path);
         console.log("Definition", definition);
 
-        let parameters = definition.requestParameters;
-        let templates = definition.requestTemplates;
+        const parameters = definition.requestParameters;
+        const templates = definition.requestTemplates;
 
         // Map input (which is expanded by requestParameters)
-        let integration = { params: _.merge({}, this.params, this.request.query, this.request.header)};
+        const integration = { params: _.merge({}, this.params, this.request.query, this.request.header)};
         integration.path = _.merge({}, this.params);
         integration.querystring = _.merge({}, this.request.query);
         integration.header = _.merge({}, this.request.header);
 
-        let body = this.request.body;
+        const body = this.request.body;
 
         for (let param in parameters) {
             let value = parameters[param].toLowerCase();
@@ -48,7 +47,7 @@ module.exports = function (apiSpec) {
         }
 
         // Build a faux context
-        let context = {
+        const context = {
             apiId: 'local-lambda',
             httpMethod: this.request.method,
             identity: {},   // We can't possibly mock a Cognito identity...
@@ -58,7 +57,7 @@ module.exports = function (apiSpec) {
             stage: 'dev'
         };
 
-        let input = {
+        const input = {
             params: function(name) {
                 if (!name) return integration;
                 if (_.has(integration.path, name)) return integration.path[name];
@@ -66,21 +65,15 @@ module.exports = function (apiSpec) {
                 if (_.has(integration.header, name.toLowerCase())) return integration.header[name.toLowerCase()];
             },
 
-            json: function(path) {
-                if (body) return JSON.stringify(JSONPath.value(body, path));
-                return JSON.stringify(JSONPath.value(integration, path));
+            json: function(p) {
+                if (body) return JSON.stringify(JSONPath.value(body, p));
+                return JSON.stringify(JSONPath.value(integration, p));
             },
 
-            path: function(path) {
-                if (body) return JSONPath.value(body, path);
-                return JSONPath.value(integration, path);
+            path: function(p) {
+                if (body) return JSONPath.value(body, p);
+                return JSONPath.value(integration, p);
             }
-        };
-
-        let root = {
-            input: input,
-            context: context,
-            util: util
         };
 
         // Use combination of input, context and util to populate the request template
@@ -95,27 +88,27 @@ module.exports = function (apiSpec) {
             // 1. Within double quotes (value ends up being a string)
             // 2. Within single quotes (value ends up being a string)
             // 3. As a "word" (value ends up being an object or variable reference)
-            let regex = /(?:\"(\$(input|context|util)\.((?:[\w\.\(\)\$]|\'|\\\")*))\")|(?:\'(\$(input|context|util)\.((?:[\w\.\(\)\$]|\\\'|\")*))\')|(\$(input|context|util)\.((?:[\w\.\(\)\$]|\'|\")*))/g;
-            let variableSubstitution = /\$(input|context|util)/g;
+            const regex = /(?:\"(\$(input|context|util)\.((?:[\w\.\(\)\$]|\'|\\\")*))\")|(?:\'(\$(input|context|util)\.((?:[\w\.\(\)\$]|\\\'|\")*))\')|(\$(input|context|util)\.((?:[\w\.\(\)\$]|\'|\")*))/g;
+            const variableSubstitution = /\$(input|context|util)/g;
 
             template = template.replace(regex, function(m, match) {
                 // Replace $util, $input and $context
                 if (!match) match = m;
 
-                let adjustedMatch = match.replace(variableSubstitution, function(m, variable) {
+                const adjustedMatch = match.replace(variableSubstitution, function(mi, variable) {
                     return variable;
                 });
 
                 // Try to evaluate the match
                 let result = match;
                 try {
-                    let func = new Function('input', 'context', 'util', 'return ' + adjustedMatch);
+                    const func = new Function('input', 'context', 'util', 'return ' + adjustedMatch);
                     result = func(input, context, util);
                 } catch (e) {
                     // Ignore
                 }
 
-                if (m.charAt(0) == '\'' || m.charAt(0) == '\"')
+                if (m.charAt(0) == '\'' || m.charAt(0) == '\"')
                     return '\"' + result + '\"';
 
                 return result;
@@ -123,5 +116,5 @@ module.exports = function (apiSpec) {
 
             return {context: context, event: JSON.parse(template)};
         }
-    }
+    };
 };
