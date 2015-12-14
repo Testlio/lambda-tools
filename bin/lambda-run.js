@@ -116,6 +116,6 @@ swagger.validate(program.apiFile, function(err, api) {
         .use(router.routes())
         .use(router.allowedMethods());
 
-    app.listen(3000);
-    console.log("Server listening on 3000".green);
+    app.listen(program.port);
+    console.log(("Server listening on " + program.port).green);
 });
