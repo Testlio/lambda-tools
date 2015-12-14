@@ -28,7 +28,7 @@ const async         = require('async');
 //
 function processLambda(program, configuration, baseResource, outputTemplate, lambdaPath, callback) {
     let name = path.basename(lambdaPath);
-    let camelName = name.camelCase();
+    let camelName = name.toCamelCase();
     camelName = camelName.charAt(0).toLowerCase() + camelName.substring(1);
     console.log(`Processing "${name}" (${camelName})`);
 
