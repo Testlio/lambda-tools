@@ -10,7 +10,7 @@ const cp            = require('child_process');
 const fs            = require('fs');
 const async         = require('async');
 const AWS           = require('aws-sdk');
-const merge         = require('deepmerge');
+const _             = require('lodash');
 
 function checkDependencies() {
     try {
@@ -121,7 +121,7 @@ module.exports = function(program, workingDirectory, callback) {
                     const customCF = path.join(root, 'cf.json');
                     if (fsx.fileExists(customCF)) {
                         const customStackCF = fsx.readJSONFileSync(customCF);
-                        stackCF = merge(stackCF, customStackCF);
+                        _.merge(stackCF, customStackCF);
                     }
 
                     // Project name parameter need to be set (as they include an allowedValues listing)

@@ -81,11 +81,6 @@ program.environment["AWS_REGION"] = program.region;
 program.environment["AWS_STAGE"] = program.stage;
 program.environment["AWS_PROJECT_NAME"] = program.projectName;
 
-// Flatten to a string
-program.flatEnvironment = Object.keys(program.environment).reduce(function(current, key) {
-    return current + key + '=' + program.environment[key] + '\n';
-}, '');
-
 //
 //  Actual content of the script
 //

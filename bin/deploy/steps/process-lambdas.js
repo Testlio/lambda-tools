@@ -10,14 +10,15 @@ require('../../helpers/string_additions');
 const fs            = require('fs');
 const fsx           = require('../../helpers/fs_additions');
 const path          = require('path');
-const merge         = require('deepmerge');
 const browserify    = require('browserify');
 const babelify      = require('babelify');
+const envify        = require('envify');
 const presets       = require('babel-preset-es2015');
 const uglify        = require('uglify-js');
 const dot           = require('dot');
 const Zip           = require('node-zip');
 const async         = require('async');
+const _             = require('lodash');
 
 //
 //  Processing helper, results in an object that can be used to
@@ -33,10 +34,10 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
 
     // Load in the cloudformation config (if any)
     const lambdaCustomCF = path.join(lambdaPath, 'cf.json');
-    let config = baseResource;
+    let config = _.clone(baseResource, true);
 
     if (fsx.fileExists(lambdaCustomCF)) {
-        config = merge(baseResource, fsx.readJSONFileSync(lambdaCustomCF));
+        _.merge(config, fsx.readJSONFileSync(lambdaCustomCF));
     }
 
     const handler = config["Properties"]["Handler"].split('.', 1) + '';
@@ -74,6 +75,7 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
         });
 
         bundler.exclude('aws-sdk');
+
         bundler.transform(babelify, {
             presets: [presets],
             compact: false,
@@ -81,11 +83,16 @@ function processLambda(program, configuration, baseResource, outputTemplate, lam
             ignore: /\/node_modules\/(lambda_deployment|\.bin)\/.*/
         });
 
+        let env = {
+            _: 'purge'
+        };
+        _.merge(env, program.environment);
+        bundler.transform(envify, env);
+
         // Build the ZIP file we need
         const zip = new Zip();
-        zip.file('.env', program.flatEnvironment);
 
-        console.log('\tBrowserifying');
+        console.log('\tBrowserifying/Envifying');
         bundler.bundle(function(err, bundled) {
             if (err) {
                 console.error("\tFailed to compress code".red, err);
