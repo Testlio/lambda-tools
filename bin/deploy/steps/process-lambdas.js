@@ -6,7 +6,7 @@
 //  staging directory along with a preliminary CF template file
 //
 
-require('../helpers/string_additions');
+require('../../helpers/string_additions');
 const fs            = require('fs');
 const fsx           = require('../../helpers/fs_additions');
 const path          = require('path');
