@@ -5,8 +5,8 @@ const program = require('commander');
 const swagger = require('swagger-parser');
 const _ = require('lodash');
 
-const fsx = require('./helpers/fs_additions');
-require('./helpers/string_additions');
+const fsx = require('./helpers/fs-additions');
+require('./helpers/string-additions');
 
 const Integration = require('./runner/integration');
 const Execution = require('./runner/execution');

@@ -1,6 +1,6 @@
 "use strict";
 
-require('../../helpers/string_additions');
+require('../../helpers/string-additions');
 const fs        = require('fs');
 const cp        = require('child_process');
 const AWS       = require('aws-sdk');

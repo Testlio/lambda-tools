@@ -4,7 +4,7 @@
 //  Initial setup phase of deployment
 //
 
-const fsx           = require('../../helpers/fs_additions');
+const fsx           = require('../../helpers/fs-additions');
 const path          = require('path');
 const cp            = require('child_process');
 const fs            = require('fs');

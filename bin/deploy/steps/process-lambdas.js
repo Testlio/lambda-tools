@@ -6,9 +6,9 @@
 //  staging directory along with a preliminary CF template file
 //
 
-require('../../helpers/string_additions');
+require('../../helpers/string-additions');
 const fs            = require('fs');
-const fsx           = require('../../helpers/fs_additions');
+const fsx           = require('../../helpers/fs-additions');
 const path          = require('path');
 const browserify    = require('browserify');
 const babelify      = require('babelify');

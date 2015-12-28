@@ -1,6 +1,6 @@
 "use strict";
 
-require('./helpers/string_additions');
+require('./helpers/string-additions');
 
 const setup             = require('./deploy/steps/setup');
 const processLambdas    = require('./deploy/steps/process-lambdas');
