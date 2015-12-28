@@ -4,12 +4,15 @@ const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
 const _ = require('lodash');
+const colors = require('colors');
 
+const parseEnvironment = require('./helpers/environment-parser.js');
 const fsx = require('./helpers/fs-additions');
 require('./helpers/string-additions');
 
 const Integration = require('./runner/integration');
 const Execution = require('./runner/execution');
+const Responder = require('./runner/responder');
 
 const parser = require('koa-body')();
 const app = require('koa')();
@@ -23,6 +26,7 @@ const logger = require('koa-logger')();
 program
     .option('-p, --port <number>', 'Port to use locally')
     .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")')
+    .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment)
     .parse(process.argv);
 
 // Determine our target directory
@@ -30,6 +34,7 @@ program.directory = process.cwd();
 
 // Default values for params
 program.port = program.port || 3000;
+program.environment = program.environment || {};
 program.apiFile = path.resolve(program.directory, program.apiFile || './api.json');
 
 // Parse API definition into a set of routes
@@ -56,6 +61,7 @@ swagger.validate(program.apiFile, function(err, api) {
             router[method](parsedPath, function *(next) {
                 // The API path is known
                 this.apiPath = p;
+                this.program = program;
 
                 // Derive the Lambda function file path (ignoring whether it exists or not)
                 let lambdaPath = _.get(methods, [method, 'x-amazon-apigateway-integration', 'uri']);
