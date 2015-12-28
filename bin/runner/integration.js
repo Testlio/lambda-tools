@@ -18,8 +18,6 @@ module.exports = function (apiSpec) {
     return function *() {
         const path = ['paths', this.apiPath, this.request.method.toLowerCase(), 'x-amazon-apigateway-integration'];
         const definition = _.get(apiSpec, path);
-        console.log("Definition", definition);
-
         const parameters = definition.requestParameters;
         const templates = definition.requestTemplates;
 
@@ -78,42 +76,13 @@ module.exports = function (apiSpec) {
 
         // Use combination of input, context and util to populate the request template
         // For now, we only support json templates
-        let template = templates['application/json'];
+        let contentType = this.request.header['content-type'] || 'application/json';
+        let template = templates[contentType];
         if (!template) {
             // We can't set an event
             return {context: context};
         } else {
-            // Use a crazy-ass regex to try and capture any variables that we need to evaluate
-            // Three rules:
-            // 1. Within double quotes (value ends up being a string)
-            // 2. Within single quotes (value ends up being a string)
-            // 3. As a "word" (value ends up being an object or variable reference)
-            const regex = /(?:\"(\$(input|context|util)\.((?:[\w\.\(\)\$]|\'|\\\")*))\")|(?:\'(\$(input|context|util)\.((?:[\w\.\(\)\$]|\\\'|\")*))\')|(\$(input|context|util)\.((?:[\w\.\(\)\$]|\'|\")*))/g;
-            const variableSubstitution = /\$(input|context|util)/g;
-
-            template = template.replace(regex, function(m, match) {
-                // Replace $util, $input and $context
-                if (!match) match = m;
-
-                const adjustedMatch = match.replace(variableSubstitution, function(mi, variable) {
-                    return variable;
-                });
-
-                // Try to evaluate the match
-                let result = match;
-                try {
-                    const func = new Function('input', 'context', 'util', 'return ' + adjustedMatch);
-                    result = func(input, context, util);
-                } catch (e) {
-                    // Ignore
-                }
-
-                if (m.charAt(0) == '\'' || m.charAt(0) == '\"')
-                    return '\"' + result + '\"';
-
-                return result;
-            });
-
+            template = util.parseMappingTemplate(template, input, context);
             return {context: context, event: JSON.parse(template)};
         }
     };

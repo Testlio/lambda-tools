@@ -48,6 +48,7 @@ swagger.validate(program.apiFile, function(err, api) {
     // Our sort-of "middleware" for handling the Lambda integration
     // within the koa-router middleware
     const integrator = Integration(api);
+    const responder = Responder(api);
 
     for (const p in api.paths) {
         const methods = api.paths[p];
@@ -92,7 +93,9 @@ swagger.validate(program.apiFile, function(err, api) {
                     lambdaPath = path.resolve(lambdaPath, handler);
                 }
 
+                console.log('\t--'.gray, 'Creating integration');
                 const integration = yield integrator.bind(this);
+                console.log('\t', JSON.stringify(integration, null, '\t').split('\n').join('\n\t'), '\n');
 
                 // Extend context to give it the necessary functions
                 // (done, fail, succeed, timeRemainingInMillis)
@@ -100,14 +103,14 @@ swagger.validate(program.apiFile, function(err, api) {
                 context = _.merge(context, integration.context);
                 context.awsRequestId = context.requestId;
 
+                console.log('\t--'.gray, 'Executing Lambda function');
                 const result = yield Execution.bind(this, lambdaPath, integration.event, context);
-                console.log('Result', result);
+                console.log('\t', 'Done');
 
-                this.status = 200;
-                this.body = {
-                    request: this.request,
-                    response: this.response
-                };
+                // Final step is to map the result back to a response
+                const response = yield responder.bind(this, result);
+                this.status = response.status;
+                this.body = response.body;
 
                 yield next;
             });
@@ -115,6 +118,16 @@ swagger.validate(program.apiFile, function(err, api) {
     }
 
     app
+        .use(function *(next) {
+            try {
+                yield next;
+            } catch (err) {
+                this.status = err.status || 500;
+                this.body = err.message;
+                console.error(err.stack);
+                console.error(err.message);
+            }
+        })
         .use(logger)
         .use(parser)
         .use(router.routes())

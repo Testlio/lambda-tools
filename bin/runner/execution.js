@@ -1,5 +1,53 @@
 "use strict";
 
+const path = require('path');
+const _ = require('lodash');
+const Promise = require('bluebird');
+
 module.exports = function *(lambdaPath, event, context) {
-    console.log("Execute lambda", lambdaPath, event, context);
+    const pathComponents = lambdaPath.split('.')
+    let handlerFunction = 'handler';
+
+    if (pathComponents[pathComponents.length - 1] !== 'js') {
+        handlerFunction = pathComponents[pathComponents.length - 1];
+        pathComponents[pathComponents.length - 1] = 'js';
+    }
+
+    context.lambda = {
+        file: pathComponents.join('.'),
+        handler: handlerFunction
+    };
+
+    return new Promise(function(resolve, reject) {
+        // Watchdog (timeouts are observed, process exits not)
+        let timeout = setTimeout(function() {
+            // Resolve with an error message
+            resolve('Function timed out');
+        }, context.timeout * 1000);
+
+        // Actual context completion handlers
+        context.done = function(error, result) {
+            clearTimeout(timeout);
+
+            if (error) {
+                resolve(error.message);
+            } else {
+                resolve(JSON.stringify(result));
+            }
+        }.bind(this);
+
+        context.fail = function(error) {
+            this.done(error, null);
+        }.bind(context);
+
+        context.succeed = function(result) {
+            this.done(null, result);
+        }.bind(context);
+
+        // This is not particularly safe, but it is applicable to assume
+        // the caller is intimately familar with the functions they are
+        // about to execute
+        const handler = require(context.lambda.file)[context.lambda.handler];
+        handler(event, context);
+    });
 };
