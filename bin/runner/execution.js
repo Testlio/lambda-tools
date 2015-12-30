@@ -3,6 +3,7 @@
 const path = require('path');
 const _ = require('lodash');
 const Promise = require('bluebird');
+const reRequire = require('re-require-module').reRequire;
 
 module.exports = function *(lambdaPath, event, context) {
     const pathComponents = lambdaPath.split('.')
@@ -58,7 +59,7 @@ module.exports = function *(lambdaPath, event, context) {
         // This is not particularly safe, but it is applicable to assume
         // the caller is intimately familar with the functions they are
         // about to execute
-        const handler = require(context.lambda.file)[context.lambda.handler];
+        const handler = reRequire(context.lambda.file)[context.lambda.handler];
         handler(event, context);
     });
 };
