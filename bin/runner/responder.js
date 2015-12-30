@@ -16,7 +16,7 @@ module.exports = function (apiSpec) {
 
         _.forEach(responses, function(r, key) {
             let regex = new RegExp(key);
-            if (result.match(regex)) {
+            if (result && result.match(regex)) {
                 response = r;
                 return false;
             }
