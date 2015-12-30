@@ -2,7 +2,19 @@
 
 This repository contains a set of scripts that are useful when developing [AWS Lambda](https://aws.amazon.com/lambda/) backed microservices that rely on [AWS CloudFormation](https://aws.amazon.com/cloudformation/) and [AWS API Gateway](https://aws.amazon.com/api-gateway/).
 
-## Deploy - `deploy`
+## Installation
+
+Install the tools via npm, this will make the following commands available in the directory that you ran the install command in (optionally, pass in `-g` to install the commands globally).
+
+```
+npm install @testlio/lambda-tools
+```
+
+## Deploy
+
+```
+lambda deploy -n project-name [-s stage-to-deploy] [-r aws-region-to-deploy-to] [-h]
+```
 
 Deployment of a service to AWS, goes through multiple steps during the process:
 1. Locally processes Lambda functions, using [browserify](http://browserify.org) and [uglify](https://github.com/mishoo/UglifyJS) to optimise the performance of the resulting functions
@@ -10,21 +22,23 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 3. Parses a [Swagger](http://swagger.io) definition for an API, autocompleting Lambda function ARNs and Lambda role ARNs
 4. Creates/Updates and deploys a REST API on API Gateway using definition built in (3.)
 
-### Usage
-
-```
-deploy -n project-name [-s stage-to-deploy] [-r aws-region-to-deploy-to]
-```
-
-Additional arguments can be looked up by calling `deploy -h`
-
 ### Authentication
 
-`deploy` assumes you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
+`lambda deploy` assumes you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
 
-### Notes about microservice structure
+## Run
 
-In order for the `deploy` script to work properly, the following structure is assumed for a microservice
+```
+lambda run [-p port] [-e environment=value,foo=bar] [-a path-to-api-spec] [-h]
+```
+
+Running a Lambda backed microservice locally. This should be used strictly for development purposes as the code that simulates AWS is imperfect (at best) and is not guaranteed to respond similarly to the actual Lambda environment. It does however do its best to allow locally debugging lambda functions sitting behind an API gateway.
+
+The command starts a local server, which parses the API spec (defaults to `./api.json`) and creates appropriate routes, all invalid routes return `404`. The server also mimics AWS's logic in creating the integration (i.e it maps the incoming HTTP request into an AWS Lambda integration), as well as mapping the result of the Lambda function into an appropriate HTTP response.
+
+## Notes about microservice structure
+
+In order for the scripts to work properly, the following structure is assumed for a microservice
 
 ```
 Root Directory of the service
@@ -41,6 +55,6 @@ Root Directory of the service
 
 As all Lambda functions are bundled and compressed during deployment, it is safe to share common code between Lambda functions in the top level of the microservice, for example in a directory called `common` or `lib`.
 
-#### Examples
+### Examples
 
 A minimal example of a service is implemented under [`examples/microservice`](examples/microservice), for more complex examples, look at [bulletin-service](https://github.com/testlio/bulletin-service).
