@@ -18,16 +18,24 @@ module.exports = function *(lambdaPath, event, context) {
         handler: handlerFunction
     };
 
+    const environment = this.program.environment;
+
     return new Promise(function(resolve, reject) {
+        // Capture environment to return to later
+        const oldEnvironment = process.env;
+
         // Watchdog (timeouts are observed, process exits not)
         let timeout = setTimeout(function() {
             // Resolve with an error message
-            resolve('Function timed out');
+            context.fail(new Error('Function timed out'));
         }, context.timeout * 1000);
 
         // Actual context completion handlers
         context.done = function(error, result) {
             clearTimeout(timeout);
+
+            // Restore environment
+            process.env = oldEnvironment;
 
             if (error) {
                 resolve(error.message);
@@ -43,6 +51,9 @@ module.exports = function *(lambdaPath, event, context) {
         context.succeed = function(result) {
             this.done(null, result);
         }.bind(context);
+
+        // Overwrite environment
+        process.env = _.assign({}, process.env, environment);
 
         // This is not particularly safe, but it is applicable to assume
         // the caller is intimately familar with the functions they are
