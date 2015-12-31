@@ -17,6 +17,7 @@ lambda deploy -n project-name [-s stage-to-deploy] [-r aws-region-to-deploy-to] 
 ```
 
 Deployment of a service to AWS, goes through multiple steps during the process:
+
 1. Locally processes Lambda functions, using [browserify](http://browserify.org) and [uglify](https://github.com/mishoo/UglifyJS) to optimise the performance of the resulting functions
 2. Generates a CloudFormation template that is used to raise/update a stack on AWS
 3. Parses a [Swagger](http://swagger.io) definition for an API, autocompleting Lambda function ARNs and Lambda role ARNs
