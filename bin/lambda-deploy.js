@@ -50,7 +50,7 @@ program.environment["AWS_PROJECT_NAME"] = program.projectName;
 //
 //  Actual content of the script
 //
-const workingDirectory = path.join(path.resolve(__dirname), 'deploy');
+const workingDirectory = path.join(path.resolve(__dirname), '../lib/deploy');
 
 async.waterfall(
     [
