@@ -7,7 +7,7 @@ require('colors');
 const _ = require('lodash');
 
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
-const Route = require('../lib/runner/route');
+const Route = require('../lib/run/route');
 
 const parser = require('koa-body')();
 const app = require('koa')();
