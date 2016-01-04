@@ -1,13 +1,13 @@
 "use strict";
 
-require('./helpers/string-additions');
-const parseEnvironment = require('./helpers/environment-parser.js');
+require('../lib/helpers/string-additions');
+const parseEnvironment = require('../lib/helpers/environment-parser.js');
 
-const setup             = require('./deploy/steps/setup');
-const processLambdas    = require('./deploy/steps/process-lambdas');
-const deployStack       = require('./deploy/steps/deploy-stack');
-const getStackOutputs   = require('./deploy/steps/get-outputs-stack');
-const deployAPI         = require('./deploy/steps/deploy-api');
+const setup             = require('../lib/deploy/steps/setup');
+const processLambdas    = require('../lib/deploy/steps/process-lambdas');
+const deployStack       = require('../lib/deploy/steps/deploy-stack');
+const getStackOutputs   = require('../lib/deploy/steps/get-outputs-stack');
+const deployAPI         = require('../lib/deploy/steps/deploy-api');
 
 const path          = require('path');
 const program       = require('commander');
