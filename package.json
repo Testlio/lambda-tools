@@ -3,6 +3,9 @@
   "version": "1.0.2",
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
+  "scripts": {
+    "lint": "eslint ."
+  },
   "bin": {
     "lambda": "bin/lambda.js"
   },
@@ -46,5 +49,8 @@
     "swagger-parser": "^3.3.0",
     "uglify-js": "^2.6.1",
     "vm2": "^1.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^1.10.3"
   }
 }

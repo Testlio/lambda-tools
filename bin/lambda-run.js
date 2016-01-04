@@ -3,7 +3,7 @@
 const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
-const colors = require('colors');
+require('colors');
 const _ = require('lodash');
 
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
@@ -29,7 +29,7 @@ program.directory = process.cwd();
 
 // Default values for params
 program.port = program.port || 3000;
-program.environment = program.environment || {};
+program.environment = program.environment || {};
 program.apiFile = path.resolve(program.directory, program.apiFile || './api.json');
 
 // Parse API definition into a set of routes
@@ -56,9 +56,9 @@ swagger.validate(program.apiFile, function(err, api) {
             // Generic error handler
             try {
                 yield next;
-            } catch (err) {
-                this.status = err.status || 500;
-                this.body = err.message;
+            } catch (innerError) {
+                this.status = innerError.status || 500;
+                this.body = innerError.message;
                 console.error(err.stack);
                 console.error(err.message);
             }
