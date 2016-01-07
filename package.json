@@ -1,6 +1,6 @@
 {
   "name": "@testlio/lambda-tools",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
   "scripts": {
@@ -43,7 +43,6 @@
     "moment": "^2.11.0",
     "node-uuid": "^1.4.7",
     "node-zip": "^1.1.1",
-    "re-require-module": "^1.0.2",
     "readline-sync": "^1.2.21",
     "rimraf": "^2.4.4",
     "swagger-parser": "^3.3.0",
