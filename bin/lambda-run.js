@@ -59,8 +59,8 @@ swagger.validate(program.apiFile, function(err, api) {
             } catch (innerError) {
                 this.status = innerError.status || 500;
                 this.body = innerError.message;
-                console.error(err.stack);
-                console.error(err.message);
+                console.error(innerError.stack);
+                console.error(innerError.message);
             }
         })
         .use(logger)
