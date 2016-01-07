@@ -1,0 +1,24 @@
+{
+    "rules": {
+        "indent": [2, 4],
+        "linebreak-style": [2, "unix"],
+        "semi": [2, "always"],
+        "no-undef": [2],
+        "no-unused-vars": [2],
+        "no-shadow": [2],
+        "no-use-before-define": [2],
+        "handle-callback-err": [2],
+        "no-path-concat": [2],
+        "comma-spacing": [2, {"before": false, "after": true}],
+        "camelcase": [2, {"properties": "always"}],
+        "no-var": [2],
+        "no-const-assign": [2],
+        "prefer-const": [2],
+        "no-console": [0]
+    },
+    "env": {
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended"
+}

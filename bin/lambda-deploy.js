@@ -1,64 +1,26 @@
-#!/usr/bin/env node
-
 "use strict";
 
-require('./helpers/string_additions');
+require('../lib/helpers/string-additions');
+const parseEnvironment = require('../lib/helpers/environment-parser.js');
 
-const setup             = require('./steps/setup');
-const processLambdas    = require('./steps/process-lambdas');
-const deployStack       = require('./steps/deploy-stack');
-const getStackOutputs   = require('./steps/get-outputs-stack');
-const deployAPI         = require('./steps/deploy-api');
+const setup             = require('../lib/deploy/steps/setup');
+const processLambdas    = require('../lib/deploy/steps/process-lambdas');
+const deployStack       = require('../lib/deploy/steps/deploy-stack');
+const getStackOutputs   = require('../lib/deploy/steps/get-outputs-stack');
+const deployAPI         = require('../lib/deploy/steps/deploy-api');
 
 const path          = require('path');
 const program       = require('commander');
 const prompt        = require('readline-sync');
 const colors        = require('colors');
-const fs            = require('fs');
 const AWS           = require('aws-sdk');
 const async         = require('async');
-
-//
-//  Helpers
-//
-
-function parseEnvironment(value) {
-    // Split on unescaped commas first
-    let pairs = [];
-
-    let previousIndex = 0;
-    value.replace(/(\\)?,/g, function(match, slash, index) {
-        if (!slash) {
-            pairs.push(value.substring(previousIndex, index));
-            previousIndex = index + match.length;
-        }
-
-        return match;
-    });
-    pairs.push(value.substring(previousIndex));
-
-    // Then split all the pairs on unescaped = signs
-    let result = {};
-    pairs.forEach(function(pair) {
-        let match = pair.match(/(?:[^\\])=/);
-
-        if (match) {
-            let key = pair.substring(0, match.index + 1).replace(/\\(.)/g, "$1");
-            let value = pair.substring(match.index + 2).replace(/\\(.)/g, "$1");
-
-            result[key] = value;
-        }
-    });
-
-    return result;
-}
 
 //
 //  Program specification
 //
 
 program
-    .version('0.1')
     .option('-n, --project-name <name>', 'Project name')
     .option('-s, --stage <stage>', 'Stage name')
     .option('-r, --region <region>', 'Region')
@@ -88,7 +50,7 @@ program.environment["AWS_PROJECT_NAME"] = program.projectName;
 //
 //  Actual content of the script
 //
-let workingDirectory = path.resolve(__dirname);
+const workingDirectory = path.join(path.resolve(__dirname), '../lib/deploy');
 
 async.waterfall(
     [
@@ -99,41 +61,41 @@ async.waterfall(
             });
         },
 
-        function(program, configuration, callback) {
+        function(prog, configuration, callback) {
             console.log('Processing Lambdas\n'.underline);
-            processLambdas(program, configuration, function(err) {
-                callback(err, program, configuration);
+            processLambdas(prog, configuration, function(err) {
+                callback(err, prog, configuration);
             });
         },
 
-        function(program, configuration, callback) {
-            if (program.skipStack) {
+        function(prog, configuration, callback) {
+            if (prog.skipStack) {
                 console.log('Skipping stack update\n'.underline);
-                callback(null, program, configuration);
+                callback(null, prog, configuration);
             } else {
                 console.log('Updating stack\n'.underline);
-                deployStack(program, configuration, function(err) {
-                    callback(err, program, configuration);
+                deployStack(prog, configuration, function(err) {
+                    callback(err, prog, configuration);
                 });
             }
         },
 
-        function(program, configuration, callback) {
+        function(prog, configuration, callback) {
             console.log('Grabbing stack details\n'.underline);
-            getStackOutputs(program, configuration, function(err, outputs) {
-                callback(err, program, configuration, outputs);
+            getStackOutputs(prog, configuration, function(err, outputs) {
+                callback(err, prog, configuration, outputs);
             });
         },
 
-        function(program, configuration, stackOutputs, callback) {
+        function(prog, configuration, stackOutputs, callback) {
             console.log('Deploying API\n'.underline);
-            deployAPI(program, configuration, stackOutputs, function(err) {
-                callback(err, program, configuration);
+            deployAPI(prog, configuration, stackOutputs, function(err) {
+                callback(err, prog, configuration);
             });
         }
     ],
 
-    function(error, result) {
+    function(error) {
         if (!error) {
             console.log('\nDeployed - ' + '#lambdahype'.rainbow);
         } else {
