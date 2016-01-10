@@ -93,7 +93,7 @@ if (!program.skipApi && !program.dryRun) {
     promise = promise.then(deployAPI);
 }
 
-promise.then(function(ctx) {
+promise.then(function() {
     console.log('\nDeployment complete ' + '#lambdahype'.rainbow);
 }).catch(function(error) {
     console.log('Deployment failed'.bold.red, error.stack);
