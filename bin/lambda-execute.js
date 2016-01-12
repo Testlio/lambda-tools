@@ -26,6 +26,9 @@ program.directory = process.cwd();
 // Default values for params
 program.environment = program.environment || {};
 program.timeout = program.timeout || 6;
+program.file = program.file || 'index.js';
+program.event = program.event || 'event.json';
+
 program.file = path.resolve(program.directory, program.file);
 program.event = path.resolve(program.directory, program.event);
 this.program = program;
