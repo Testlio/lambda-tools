@@ -23,9 +23,17 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 3. Parses a [Swagger](http://swagger.io) definition for an API, autocompleting Lambda function ARNs and Lambda role ARNs
 4. Creates/Updates and deploys a REST API on API Gateway using definition built in (3.)
 
+## Deploy (Single Lambda)
+
+```
+lambda deploy-single -n function-name -f main.js [-r aws-region-to-deploy-to] [-h]
+```
+
+Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3.
+
 ### Authentication
 
-`lambda deploy` assumes you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
+`lambda deploy` and `lambda deploy-single` assume you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
 
 ## Run
 
