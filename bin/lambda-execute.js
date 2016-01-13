@@ -31,7 +31,6 @@ program.event = program.event || 'event.json';
 
 program.file = path.resolve(program.directory, program.file);
 program.event = path.resolve(program.directory, program.event);
-this.program = program;
 
 const event = fsx.readJSONFileSync(program.event);
 const context = {
@@ -46,7 +45,7 @@ console.log('\tWith event:');
 console.log(JSON.stringify(event, null, '\t').split('\n').join('\n\t'), '\n');
 console.log('\t--'.gray);
 
-let promise = Execution.bind(this)(program.file, event, context).next().value;
+let promise = Execution(program.file, event, context, program.environment).next().value;
 
 promise.then(function(result) {
     console.log('\t--'.gray);
