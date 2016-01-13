@@ -25,9 +25,9 @@ const deployAPI = require('../lib/deploy/deploy-api-step');
 
 program
     .option('-n, --project-name <name>', 'Project name')
-    .option('-s, --stage <stage>', 'Stage name')
-    .option('-r, --region <region>', 'Region')
-    .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment)
+    .option('-s, --stage <stage>', 'Stage name', 'dev')
+    .option('-r, --region <region>', 'Region', 'us-east-1')
+    .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--skip-stack', 'Skip updating the stack')
     .option('--skip-api', 'Skip updating the API')
@@ -38,9 +38,6 @@ program
 //
 
 program.projectName = program.projectName || prompt.question('Please enter project name: ');
-program.environment = program.environment || {};
-program.stage = program.stage ? program.stage.sanitise() : 'dev';
-program.region = program.region || 'us-east-1';
 
 // Make region global for AWS
 AWS.config.region = program.region;

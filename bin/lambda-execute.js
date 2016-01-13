@@ -14,21 +14,16 @@ const Execution = require('../lib/run/execution');
 //
 
 program
-    .option('-f, --file <file>', 'Path to the Lambda function entry point')
-    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'./event.json\'')
-    .option('--environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment)
-    .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function')
+    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', 'index.js')
+    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', 'event.json')
+    .option('--environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
+    .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
     .parse(process.argv);
 
 // Determine our target directory
 program.directory = process.cwd();
 
-// Default values for params
-program.environment = program.environment || {};
-program.timeout = program.timeout || 6;
-program.file = program.file || 'index.js';
-program.event = program.event || 'event.json';
-
+// Resolve the paths that were provided
 program.file = path.resolve(program.directory, program.file);
 program.event = path.resolve(program.directory, program.event);
 
