@@ -67,7 +67,10 @@ let context = {
 };
 
 // Setup step
-let promise = setup(context);
+let promise = new Promise(function(resolve) {
+    console.log('Deploying ' + program.projectName.underline + ' ' + program.stage.underline + ' to ' + program.region.underline);
+    resolve(context);
+}).then(setup);
 
 // Process Lambdas (OPTIONAL)
 if (!program.skipStack) {
