@@ -1,9 +1,9 @@
 "use strict";
 
+require('colors');
 const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
-require('colors');
 const _ = require('lodash');
 
 const parseEnvironment = require('../lib/helpers/environment-parser.js');

@@ -23,9 +23,27 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 3. Parses a [Swagger](http://swagger.io) definition for an API, autocompleting Lambda function ARNs and Lambda role ARNs
 4. Creates/Updates and deploys a REST API on API Gateway using definition built in (3.)
 
+## Deploy (Single Lambda)
+
+```
+lambda deploy-single -n function-name -f main.js [-r aws-region-to-deploy-to] [-h]
+```
+
+Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3.
+
 ### Authentication
 
-`lambda deploy` assumes you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
+`lambda deploy` and `lambda deploy-single` assume you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
+
+## Execute
+
+```
+lambda execute [-f lambda-file] [-e event-file] [-t timeout] [--e environment=value,foo=bar] [-h]
+```
+
+Execute a single Lambda function from a file using an event read from a referenced JSON file. The script uses the same runtime environment as `lambda run` does for the service simulation, this means the Lambda function is run in an isolated process, hiding environment variables of the parent process and soft-simulating the way AWS runs Lambda functions.
+
+By default, timeout is set to 10 seconds, event file is assumed to be `event.json` and Lambda function located in `index.js` of the current working directory.
 
 ## Run
 
@@ -37,7 +55,7 @@ Running a Lambda backed microservice locally. This should be used strictly for d
 
 The command starts a local server, which parses the API spec (defaults to `./api.json`) and creates appropriate routes, all invalid routes return `404`. The server also mimics AWS's logic in creating the integration (i.e it maps the incoming HTTP request into an AWS Lambda integration), as well as mapping the result of the Lambda function into an appropriate HTTP response.
 
-## Notes about microservice structure
+### Notes about microservice structure
 
 In order for the scripts to work properly, the following structure is assumed for a microservice
 
