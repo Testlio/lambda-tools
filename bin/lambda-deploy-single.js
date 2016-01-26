@@ -5,6 +5,7 @@ const fsx = require('../lib/helpers/fs-additions');
 const path = require('path');
 const parseEnvironment = require('../lib/helpers/environment-parser');
 const program = require('commander');
+const prompt = require('readline-sync');
 const Promise = require('bluebird');
 const _ = require('lodash');
 
