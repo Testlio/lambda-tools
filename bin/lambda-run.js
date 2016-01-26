@@ -20,8 +20,8 @@ const logger = require('koa-logger')();
 
 program
     .option('-p, --port <number>', 'Port to use locally')
-    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")')
-    .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment)
+    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', './api.json')
+    .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .parse(process.argv);
 
 // Determine our target directory
@@ -29,8 +29,8 @@ program.directory = process.cwd();
 
 // Default values for params
 program.port = program.port || 3000;
-program.environment = program.environment || {};
-program.apiFile = path.resolve(program.directory, program.apiFile || './api.json');
+program.environment = program.environment;
+program.apiFile = path.resolve(program.directory, program.apiFile);
 
 // Parse API definition into a set of routes
 swagger.validate(program.apiFile, function(err, api) {
