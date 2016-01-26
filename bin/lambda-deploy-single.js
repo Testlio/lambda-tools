@@ -21,10 +21,10 @@ const updateLambdas = require('../lib/deploy/update-lambdas-step');
 program
     .description('Deploy code to a single Lambda function')
     .option('-n, --function-name <name>', 'Function name')
-    .option('-f, --file <file>', 'Lambda file location')
-    .option('-r, --region <region>', 'AWS region to work in')
+    .option('-f, --file <file>', 'Lambda file location', './index.js')
+    .option('-r, --region <region>', 'AWS region to work in', 'us-east-1')
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
-    .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment)
+    .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment, {})
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
     .parse(process.argv);
 
@@ -33,8 +33,6 @@ program
 //
 
 program.functionName = program.functionName || prompt.question('Please enter the file containing the Lambda function: ');
-program.environment = program.environment || {};
-program.region = program.region || 'us-east-1';
 
 // Make region global for AWS
 AWS.config.region = program.region;
