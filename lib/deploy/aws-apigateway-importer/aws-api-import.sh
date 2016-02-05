@@ -1,2 +1,4 @@
 #!/bin/bash
-java -jar aws-apigateway-swagger-importer-1.0.1-jar-with-dependencies.jar "$@"
+root=$(dirname $(perl -MCwd=abs_path -e 'print abs_path(shift)' $0))
+
+java -jar $root/target/aws-apigateway-importer-1.0.3-SNAPSHOT-jar-with-dependencies.jar "$@"
