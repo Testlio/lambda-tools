@@ -3,9 +3,10 @@
 "use strict";
 
 const program = require('commander');
+const packageVersion = require('../package.json').version;
 
 program
-  .version('1.0.0')
+  .version(packageVersion)
   .command('deploy', 'deploy Lambda based microservice to AWS')
   .command('deploy-single', 'deploy a single Lambda function to AWS')
   .command('run', 'run Lambda based microservice locally', { isDefault: true })
