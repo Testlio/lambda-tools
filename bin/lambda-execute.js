@@ -9,23 +9,21 @@ const path = require('path');
 
 const Execution = require('../lib/run/execution');
 
+const cwd = process.cwd();
+
 //
 //  Program specification
 //
 
 program
-    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', 'index.js')
-    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', 'event.json')
+    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', path.resolve.bind(this, cwd), path.resolve(cwd, 'index.js'))
+    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', path.resolve.bind(this, cwd), path.resolve(cwd, 'event.json'))
     .option('--environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
     .parse(process.argv);
 
 // Determine our target directory
-program.directory = process.cwd();
-
-// Resolve the paths that were provided
-program.file = path.resolve(program.directory, program.file);
-program.event = path.resolve(program.directory, program.event);
+program.directory = cwd;
 
 const event = fsx.readJSONFileSync(program.event);
 const context = {

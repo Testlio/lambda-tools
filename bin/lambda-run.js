@@ -14,13 +14,15 @@ const app = require('koa')();
 const router = require('koa-router')();
 const logger = require('koa-logger')();
 
+const cwd = process.cwd();
+
 //
 //  Program specification
 //
 
 program
     .option('-p, --port <number>', 'Port to use locally', 3000)
-    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', './api.json', path.resolve.bind(this, program.directory))
+    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', path.resolve.bind(this, cwd), path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .parse(process.argv);
 
