@@ -68,9 +68,13 @@ let context = {
 
 // Setup step
 let promise = new Promise(function(resolve) {
-    console.log('Deploying ' + program.projectName.underline + ' ' + program.stage.underline + ' to ' + program.region.underline);
+    const dryRunString = program.dryRun ? ' (dry run)' : '';
+    console.log('Deploying ' + program.projectName.underline + ' ' + program.stage.underline + ' to ' + program.region.underline + dryRunString);
     resolve(context);
-}).then(setup);
+}).then(setup).then(function(context) {
+    console.log('Staging directory at ' + context.directories.staging);
+    return context;
+});
 
 // Process Lambdas (OPTIONAL)
 if (!program.skipStack) {

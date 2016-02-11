@@ -67,7 +67,11 @@ try {
 }
 
 // Bundle Lambda
-let promise = bundleLambdas(context);
+let promise = new Promise(function(resolve) {
+    console.log('Deploying Lambda function "' + context.lambdas[0].name + '"' + (program.dryRun ? ' (dry run)' : ''));
+    console.log('Staging directory at ' + context.directories.staging);
+    resolve(context);
+}).then(bundleLambdas);
 
 // Optionally update the code of the Lambdas on AWS
 if (!program.dryRun) {
