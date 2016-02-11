@@ -18,7 +18,7 @@ const cwd = process.cwd();
 program
     .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', path.resolve.bind(this, cwd), path.resolve(cwd, 'index.js'))
     .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', path.resolve.bind(this, cwd), path.resolve(cwd, 'event.json'))
-    .option('--environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
+    .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
     .parse(process.argv);
 
@@ -35,7 +35,7 @@ const context = {
 
 console.log('Executing Lambda function'.bold.green);
 console.log('\tWith event:');
-console.log(JSON.stringify(event, null, '\t').split('\n').join('\n\t'), '\n');
+console.log('\t' + JSON.stringify(event, null, '\t').split('\n').join('\n\t'), '\n');
 console.log('\t--'.gray);
 
 let promise = Execution(program.file, event, context, program.environment).next().value;
