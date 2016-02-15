@@ -11,13 +11,17 @@ const Execution = require('../lib/run/execution');
 
 const cwd = process.cwd();
 
+function resolvePath(filePath) {
+    return path.resolve(cwd, filePath);
+}
+
 //
 //  Program specification
 //
 
 program
-    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', path.resolve.bind(this, cwd), path.resolve(cwd, 'index.js'))
-    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', path.resolve.bind(this, cwd), path.resolve(cwd, 'event.json'))
+    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', resolvePath, path.resolve(cwd, 'index.js'))
+    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', resolvePath, path.resolve(cwd, 'event.json'))
     .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
     .parse(process.argv);
@@ -34,6 +38,7 @@ const context = {
 };
 
 console.log('Executing Lambda function'.bold.green);
+console.log('File: ' + program.file.yellow + ', Event: ' + program.event.yellow);
 console.log('\tWith event:');
 console.log('\t' + JSON.stringify(event, null, '\t').split('\n').join('\n\t'), '\n');
 console.log('\t--'.gray);
@@ -42,7 +47,7 @@ let promise = Execution(program.file, event, context, program.environment).next(
 
 promise.then(function(result) {
     console.log('\t--'.gray);
-    console.log('Lambda executed');
+    console.log('Lambda executed'.bold.green);
     console.log('\t--'.gray);
     console.log('Result:', result);
 }).catch(function(error) {

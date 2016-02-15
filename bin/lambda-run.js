@@ -16,13 +16,17 @@ const logger = require('koa-logger')();
 
 const cwd = process.cwd();
 
+function resolvePath(filePath) {
+    return path.resovle(cwd, filePath);
+}
+
 //
 //  Program specification
 //
 
 program
     .option('-p, --port <number>', 'Port to use locally', 3000)
-    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', path.resolve.bind(this, cwd), path.resolve(cwd, 'api.json'))
+    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', resolvePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .parse(process.argv);
 
