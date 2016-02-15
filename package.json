@@ -45,7 +45,8 @@
     "readline-sync": "^1.2.21",
     "rimraf": "^2.4.4",
     "swagger-parser": "^3.3.0",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "untildify": "^2.1.0"
   },
   "devDependencies": {
     "eslint": "^1.10.3"

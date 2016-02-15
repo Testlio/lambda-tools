@@ -5,23 +5,19 @@ require('colors');
 const fsx = require('../lib/helpers/fs-additions');
 const program = require('commander');
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
+const parsePath = require('../lib/helpers/path-parser.js');
 const path = require('path');
 
 const Execution = require('../lib/run/execution');
-
 const cwd = process.cwd();
-
-function resolvePath(filePath) {
-    return path.resolve(cwd, filePath);
-}
 
 //
 //  Program specification
 //
 
 program
-    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', resolvePath, path.resolve(cwd, 'index.js'))
-    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', resolvePath, path.resolve(cwd, 'event.json'))
+    .option('-f, --file <file>', 'Path to the Lambda function entry point, defaults to \'index.js\'', parsePath, path.resolve(cwd, 'index.js'))
+    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', parsePath, path.resolve(cwd, 'event.json'))
     .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
     .parse(process.argv);

@@ -7,6 +7,7 @@ const swagger = require('swagger-parser');
 const _ = require('lodash');
 
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
+const parsePath = require('../lib/helpers/path-parser.js');
 const Route = require('../lib/run/route');
 
 const parser = require('koa-body')();
@@ -16,17 +17,13 @@ const logger = require('koa-logger')();
 
 const cwd = process.cwd();
 
-function resolvePath(filePath) {
-    return path.resovle(cwd, filePath);
-}
-
 //
 //  Program specification
 //
 
 program
     .option('-p, --port <number>', 'Port to use locally', 3000)
-    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', resolvePath, path.resolve(cwd, 'api.json'))
+    .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', parsePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .parse(process.argv);
 
