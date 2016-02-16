@@ -30,6 +30,9 @@ program
 // Determine our target directory
 program.directory = process.cwd();
 
+// Extend the environment to include info about runtime
+program.environment['BASE_URL'] = 'http://localhost:' + program.port;
+
 // Parse API definition into a set of routes
 swagger.validate(program.apiFile, function(err, api) {
     if (err) {
