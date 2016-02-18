@@ -52,5 +52,5 @@ promise.then(function(result) {
     console.log('Lambda failed'.bold.red);
     console.log('\t--'.gray);
 
-    console.error('Error: ', error);
+    console.error('Error: ', error.message);
 });
