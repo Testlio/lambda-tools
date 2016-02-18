@@ -45,8 +45,12 @@ promise.then(function(result) {
     console.log('\t--'.gray);
     console.log('Lambda executed'.bold.green);
     console.log('\t--'.gray);
+
     console.log('Result:', result);
 }).catch(function(error) {
+    console.log('\t--'.gray);
     console.log('Lambda failed'.bold.red);
-    console.error(error);
+    console.log('\t--'.gray);
+
+    console.error('Error: ', error);
 });
