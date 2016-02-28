@@ -41,14 +41,6 @@ if (!program.environment['BASE_URL']) {
     program.environment['BASE_URL'] = 'http://localhost:' + program.port;
 }
 
-if (!program.environment['AWS_STAGE']) {
-    program.environment['AWS_STAGE'] = 'local';
-}
-
-if (!program.environment['AWS_REGION']) {
-    program.environment['AWS_REGION'] = 'us-east-1';
-}
-
 // Parse API definition into a set of routes
 swagger.validate(program.apiFile, function(err, api) {
     if (err) {
