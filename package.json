@@ -1,6 +1,6 @@
 {
   "name": "@testlio/lambda-tools",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
   "scripts": {
