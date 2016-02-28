@@ -5,6 +5,7 @@ const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
 const _ = require('lodash');
+const fs = require('../lib/helpers/fs-additions.js');
 
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
 const parsePath = require('../lib/helpers/path-parser.js');
@@ -25,13 +26,28 @@ program
     .option('-p, --port <number>', 'Port to use locally', 3000)
     .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', parsePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
+    .option('--mirror-environment', 'Mirror the environment visible to lambda-tools in the lambda functions')
     .parse(process.argv);
 
 // Determine our target directory
 program.directory = process.cwd();
 
+if (program.mirrorEnvironment) {
+    program.environment = _.merge({}, process.env, program.environment);
+}
+
 // Extend the environment to include info about runtime
-program.environment['BASE_URL'] = 'http://localhost:' + program.port;
+if (!program.environment['BASE_URL']) {
+    program.environment['BASE_URL'] = 'http://localhost:' + program.port;
+}
+
+if (!program.environment['AWS_STAGE']) {
+    program.environment['AWS_STAGE'] = 'local';
+}
+
+if (!program.environment['AWS_REGION']) {
+    program.environment['AWS_REGION'] = 'us-east-1';
+}
 
 // Parse API definition into a set of routes
 swagger.validate(program.apiFile, function(err, api) {
