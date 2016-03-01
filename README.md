@@ -7,7 +7,7 @@ This repository contains a set of scripts that are useful when developing [AWS L
 Install the tools via npm, this will make the following commands available in the directory that you ran the install command in (optionally, pass in `-g` to install the commands globally).
 
 ```
-npm install @testlio/lambda-tools
+npm install @testlio/lambda-tools -g
 ```
 
 ## Deploy
@@ -72,8 +72,8 @@ Root Directory of the service
     | ...
 ```
 
-As all Lambda functions are bundled and compressed during deployment, it is safe to share common code between Lambda functions in the top level of the microservice, for example in a directory called `common` or `lib`.
+As all Lambda functions are bundled and compressed during deployment, it is safe to share common code between Lambda functions in the top level of the microservice, for example in a directory called `common` or `lib`. Achieving this structure is easier by using [Yeoman](http://yeoman.io) and the [`@testlio/generator-lambda-tools` generators](https://www.npmjs.com/package/@testlio/generator-lambda-tools).
 
-### Examples
+#### Examples
 
 A minimal example of a service is implemented under [`examples/microservice`](examples/microservice), for more complex examples, look at [bulletin-service](https://github.com/testlio/bulletin-service).
