@@ -31,6 +31,7 @@ program
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--skip-stack', 'Skip updating the stack')
     .option('--skip-api', 'Skip updating the API')
+    .option('--no-minify', 'Disable minification of bundled Lambda code')
     .parse(process.argv);
 
 //
@@ -63,7 +64,7 @@ let context = {
         timestamp: Math.floor(Date.now() / 1000)
     },
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'minify'])
 };
 
 // Setup step
