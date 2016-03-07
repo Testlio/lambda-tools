@@ -1,5 +1,8 @@
 {
     "Type": "AWS::Lambda::Function",
+    "DependsOn": [
+        "IamRoleLambda"
+    ],
     "Properties": {
         "Code": {
             "S3Bucket": "",
