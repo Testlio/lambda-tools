@@ -40,6 +40,9 @@
         },
         "IamInstanceProfileLambda": {
             "Type": "AWS::IAM::InstanceProfile",
+            "DependsOn": [
+                "IamRoleLambda"
+            ],
             "Properties": {
                 "Path": "/",
                 "Roles": [
@@ -57,6 +60,10 @@
         },
         "IamPolicyLambda": {
             "Type": "AWS::IAM::Policy",
+            "DependsOn": [
+                "IamRoleLambda",
+                "IamGroupLambda"
+            ],
             "Properties": {
                 "PolicyName": {
                     "Fn::Join": [
@@ -133,6 +140,9 @@
         },
         "IamInstanceProfileApiGateway": {
             "Type": "AWS::IAM::InstanceProfile",
+            "DependsOn": [
+                "IamRoleApiGateway"
+            ],
             "Properties": {
                 "Path": "/",
                 "Roles": [
@@ -150,6 +160,10 @@
         },
         "IamPolicyApiGateway": {
             "Type": "AWS::IAM::Policy",
+            "DependsOn": [
+                "IamRoleApiGateway",
+                "IamGroupApiGateway"
+            ],
             "Properties": {
                 "PolicyName": {
                     "Fn::Join": [
