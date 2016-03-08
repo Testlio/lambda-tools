@@ -5,7 +5,6 @@ const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
 const _ = require('lodash');
-const fs = require('../lib/helpers/fs-additions.js');
 
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
 const parsePath = require('../lib/helpers/path-parser.js');
