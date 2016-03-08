@@ -1,7 +1,7 @@
 _Before submitting a new issue, make sure no suitable duplicate exists - thank you!_
 
 **Type:**
-<:bug: Bug | :new: Feature Proposal, pick one>
+<:bug: | :new:, pick one>
 <Please make sure the issue title starts with the type in square brackets []>
 
 **Description:**
