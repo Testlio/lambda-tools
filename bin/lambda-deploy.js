@@ -51,7 +51,7 @@ program.environment["AWS_PROJECT_NAME"] = program.projectName;
 //
 // Main logic
 //
-let context = {
+const context = {
     directories: {
         cwd: process.cwd(),
         root: path.join(path.resolve(__dirname), '../lib/deploy')
@@ -72,9 +72,9 @@ let promise = new Promise(function(resolve) {
     const dryRunString = program.dryRun ? ' (dry run)' : '';
     console.log('Deploying ' + program.projectName.underline + ' ' + program.stage.underline + ' to ' + program.region.underline + dryRunString);
     resolve(context);
-}).then(setup).then(function(context) {
-    console.log('Staging directory at ' + context.directories.staging);
-    return context;
+}).then(setup).then(function(ctx) {
+    console.log('Staging directory at ' + ctx.directories.staging);
+    return ctx;
 });
 
 // Process Lambdas (OPTIONAL)

@@ -39,7 +39,7 @@ console.log('\tWith event:');
 console.log('\t' + JSON.stringify(event, null, '\t').split('\n').join('\n\t'), '\n');
 console.log('\t--'.gray);
 
-let promise = Execution(program.file, event, context, program.environment).next().value;
+const promise = Execution(program.file, event, context, program.environment).next().value;
 
 promise.then(function(result) {
     console.log('\t--'.gray);
