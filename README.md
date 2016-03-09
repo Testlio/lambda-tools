@@ -76,4 +76,4 @@ As all Lambda functions are bundled and compressed during deployment, it is safe
 
 #### Examples
 
-A minimal example of a service is implemented under [`examples/microservice`](examples/microservice), for more complex examples, look at [bulletin-service](https://github.com/testlio/bulletin-service).
+A minimal example of a service is implemented under [`examples/microservice`](examples/microservice).
