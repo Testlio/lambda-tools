@@ -8,11 +8,11 @@ All contributions should come through our [GitHub repository](https://github.com
 
 ## Pull Requests
 
-All Pull Requests submitted to this repository should make use of the template provided in [PULL_REQUEST_TEMPLATE.md](/PULL_REQUEST_TEMPLATE.md). The template includes a checklist, which should be checked off before submitting and which will be used to evaluate the quality of the Pull Request.
+All Pull Requests submitted to this repository should make use of the template provided in [PULL_REQUEST_TEMPLATE.md](PULL_REQUEST_TEMPLATE.md). The template includes a checklist, which should be checked off before submitting and which will be used to evaluate the quality of the Pull Request.
 
 ## Issues
 
-All Issues filed to this repository should make use of the template provided in [ISSUE_TEMPLATE.md](/ISSUE_TEMPLATE.md). The template includes sections in angle brackets `<>`, which should be replaced by your input. Furthermore, there are parts to the Issue that are only applicable to bugs or feature proposals. These are again, marked with angle brackets and the non-applicable section to your change should be removed.
+All Issues filed to this repository should make use of the template provided in [ISSUE_TEMPLATE.md](ISSUE_TEMPLATE.md). The template includes sections in angle brackets `<>`, which should be replaced by your input. Furthermore, there are parts to the Issue that are only applicable to bugs or feature proposals. These are again, marked with angle brackets and the non-applicable section to your change should be removed.
 
 ## Submitting Changes
 
