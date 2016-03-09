@@ -8,7 +8,13 @@ _Before submitting a new issue, make sure no suitable duplicate exists - thank y
 <short description>
 
 <if bug, otherwise remove>
-**Reproduction steps:**
+**Version:**
+<lambda-tools version>
+
+**Environment:**
+<OS and Node version minimally>
+
+**Steps to reproduce:**
 - <list steps>
 
 **Expected result:**
