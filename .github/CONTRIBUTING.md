@@ -35,6 +35,7 @@ If the issue is related to a bug report, make sure to include the following info
 If you wish to see/add a feature to lambda-tools, you should also start by filing an issue (once again verifying that a matching one doesn't already exist). The issue should clearly describe the desired functionality by including:
 
 1. Description of the functionality
+2. Existing features that are affected, if any
 2. How it is surfaced to the user (new command, new option etc.)
 3. Example use of the functionality
 4. How the feature can be tested
