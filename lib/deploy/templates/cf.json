@@ -6,6 +6,11 @@
             "Default": "",
             "AllowedValues": []
         },
+        "aaProjectNameAcronym": {
+            "Type": "String",
+            "Default": "",
+            "AllowedValues": []
+        },
         "aaStage": {
             "Type": "String",
             "Default": "dev"
