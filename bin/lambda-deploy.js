@@ -31,7 +31,8 @@ program
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--skip-stack', 'Skip updating the stack')
     .option('--skip-api', 'Skip updating the API')
-    .option('--no-minify', 'Disable minification of bundled Lambda code')
+    .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
+    .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .parse(process.argv);
 
 //
@@ -64,7 +65,7 @@ const context = {
         timestamp: Math.floor(Date.now() / 1000)
     },
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'minify'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude'])
 };
 
 // Setup step

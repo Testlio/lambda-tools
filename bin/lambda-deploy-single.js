@@ -26,7 +26,8 @@ program
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
     .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment, {})
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
-    .option('--no-minify', 'Disable minification of bundled Lambda code')
+    .option('--exclude', 'Packages to exclude from bundling', function(value) { return value.split(','); })
+    .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .parse(process.argv);
 
 //
@@ -56,7 +57,7 @@ const context = {
         path: lambdaPath
     }],
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'minify'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude'])
 };
 
 // Prepare staging directory
