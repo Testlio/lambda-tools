@@ -1,0 +1,2 @@
+# Files generated during deployment
+lib/deploy/lambda_stage/*
