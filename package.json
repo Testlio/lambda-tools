@@ -4,6 +4,7 @@
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
   "scripts": {
+    "test": "echo \"No tests defined, let's hope it works?!\"",
     "lint": "eslint ."
   },
   "bin": {
