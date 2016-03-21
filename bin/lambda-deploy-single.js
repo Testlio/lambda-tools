@@ -83,6 +83,6 @@ if (!program.dryRun) {
 promise.then(function() {
     console.log('\nDeployment complete ' + '#lambdahype'.rainbow);
 }).catch(function(err) {
-    console.log('Deployment failed'.bold.red, err.stack);
+    console.error('\nDeployment failed'.bold.red, err.message, err.stack);
     process.exit(1);
 });
