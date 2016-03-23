@@ -91,12 +91,9 @@ if (!program.skipStack && !program.dryRun) {
     promise = promise.then(deployStack);
 }
 
-// Derive API spec
-promise = promise.then(deriveAPI);
-
-// Deploying to API (OPTIONAL)
 if (!program.skipApi && !program.dryRun) {
-    promise = promise.then(deployAPI);
+    // Derive and deploy API
+    promise = promise.then(deriveAPI).then(deployAPI);
 }
 
 promise.then(function() {
