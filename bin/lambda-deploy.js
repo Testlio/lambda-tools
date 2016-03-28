@@ -13,11 +13,10 @@ const _ = require('lodash');
 
 const setup = require('../lib/deploy/setup-step');
 const processing = require('../lib/deploy/bundle-lambdas-step');
+const deriveAPI = require('../lib/deploy/derive-api-step');
 const deriveStack = require('../lib/deploy/derive-stack-step');
 const fetchStack = require('../lib/deploy/fetch-stack-step');
 const deployStack = require('../lib/deploy/update-stack-step');
-const deriveAPI = require('../lib/deploy/derive-api-step');
-const deployAPI = require('../lib/deploy/deploy-api-step');
 
 //
 //  Program specification
@@ -29,8 +28,6 @@ program
     .option('-r, --region <region>', 'Region', 'us-east-1')
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
-    .option('--skip-stack', 'Skip updating the stack')
-    .option('--skip-api', 'Skip updating the API')
     .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .parse(process.argv);
@@ -78,22 +75,15 @@ let promise = new Promise(function(resolve) {
     return ctx;
 });
 
-// Process Lambdas (OPTIONAL)
-if (!program.skipStack) {
-    promise = promise.then(processing);
-}
+// Process Lambdas
+promise = promise.then(processing);
 
-// Derive stack configuration and fetch existing
-promise = promise.then(deriveStack).then(fetchStack);
+// Derive API configuration and then stack one
+promise = promise.then(deriveAPI).then(deriveStack);
 
-// Deploying to stack (OPTIONAL)
-if (!program.skipStack && !program.dryRun) {
-    promise = promise.then(deployStack);
-}
-
-if (!program.skipApi && !program.dryRun) {
-    // Derive and deploy API
-    promise = promise.then(deriveAPI).then(deployAPI);
+// Deploying the stack (OPTIONAL)
+if (!program.dryRun) {
+    promise = promise.then(fetchStack).then(deployStack);
 }
 
 promise.then(function() {
