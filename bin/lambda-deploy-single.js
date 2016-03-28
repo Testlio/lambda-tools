@@ -34,7 +34,7 @@ program
 // Configure program
 //
 
-program.functionName = program.functionName || prompt.question('Please enter the file containing the Lambda function: ');
+program.functionName = program.functionName || prompt.question('Please enter the name of the function you are deploying: ');
 
 // Make region global for AWS
 AWS.config.region = program.region;
