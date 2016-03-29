@@ -23,22 +23,38 @@
         "StageName": "{{=it.stageName}}",
         "Variables": {
             {{~it.variables :value:idx}}
+            "{{=value.key}}": {
                 "Fn::Join": [
                     "/",
                     [
+                        {{? value.lambda }}
                         {
-                            "{{=value.key}}": {
-                                "Fn::GetAtt": [
-                                    "{{=value.value}}",
-                                    "Arn"
+                            "Fn::Join": [
+                                ":",
+                                [
+                                    "arn:aws:apigateway",
+                                    {
+                                        "Ref": "AWS::Region"
+                                    },
+                                    "lambda",
+                                    "path"
                                 ]
-                            }
-                        }{{? value.path}},
-                        "{{=value.path}}"
+                            ]
+                        },
+                        "2015-03-31",
+                        "functions",
+                        {{?}}
+                        {
+                            "Fn::GetAtt": [
+                                "{{=value.value}}",
+                                "Arn"
+                            ]
+                        }{{? value.lambda }},
+                        "invocations"
                         {{?}}
                     ]
                 ]
-                {{? idx < it.variables.length - 1}},{{?}}
+            }{{? idx < it.variables.length - 1}},{{?}}
             {{~}}
         }
     }
