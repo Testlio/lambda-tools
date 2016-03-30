@@ -1,7 +1,7 @@
 {
     "Type": "Custom::APIGateway",
     "DependsOn": [
-        {{~it.dependencies :value:idx}
+        {{~it.dependencies :value:idx}}
         "{{=value}}"{{? idx < it.dependencies.length - 1}},{{?}}
         {{~}}
     ],
