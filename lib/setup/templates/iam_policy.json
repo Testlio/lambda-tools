@@ -20,7 +20,8 @@
         {
             "Effect": "Allow",
             "Action": [
-                "s3:GetObject"
+                "s3:GetObject",
+                "s3:HeadObject"
             ],
             "Resource": "*"
         },
