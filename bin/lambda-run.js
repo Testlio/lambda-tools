@@ -40,6 +40,18 @@ if (!program.environment['BASE_URL']) {
     program.environment['BASE_URL'] = 'http://localhost:' + program.port;
 }
 
+function * genericErrorHandler(next) {
+    // Generic error handler
+    try {
+        yield next;
+    } catch (innerError) {
+        this.status = innerError.status || 500;
+        this.body = innerError.message;
+        console.error(innerError.stack);
+        console.error(innerError.message);
+    }
+}
+
 // Parse API definition into a set of routes
 swagger.validate(program.apiFile, function(err, api) {
     if (err) {
@@ -60,22 +72,11 @@ swagger.validate(program.apiFile, function(err, api) {
     });
 
     app
-        .use(function *(next) {
-            // Generic error handler
-            try {
-                yield next;
-            } catch (innerError) {
-                this.status = innerError.status || 500;
-                this.body = innerError.message;
-                console.error(innerError.stack);
-                console.error(innerError.message);
-            }
-        })
+        .use(genericErrorHandler)
         .use(logger)
         .use(parser)
         .use(router.routes())
         .use(router.allowedMethods());
-
     app.listen(program.port);
     console.log(("Server listening on " + program.port).green);
 });
