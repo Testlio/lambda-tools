@@ -1,5 +1,10 @@
 {
     "Type": "Custom::APIGateway",
+    "DependsOn": [
+        {{~it.dependencies :value:idx}
+        "{{=value}}"{{? idx < it.dependencies.length - 1}},{{?}}
+        {{~}}
+    ],
     "Properties": {
         "ServiceToken": {
             "Fn::Join": [
