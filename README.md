@@ -30,7 +30,7 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 
 1. Locally processes Lambda functions, using [browserify](http://browserify.org) and [uglify](https://github.com/mishoo/UglifyJS) to optimise the performance of the resulting functions
 2. Generates a CloudFormation template that is used to raise/update a stack on AWS
-3. Uploads Lambda function code, api definition (if any) and the compiled CloudFormation template to S3
+3. Uploads Lambda function code, API definition (if any) and the compiled CloudFormation template to S3
 4. Creates/Updates the CF stack using the template and assets in S3
 
 ## Deploy (Single Lambda)
