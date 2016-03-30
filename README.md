@@ -12,23 +12,31 @@ Install the tools via npm, this will make the following commands available in th
 npm install @testlio/lambda-tools -g
 ```
 
+## Setup
+
+This step should only ever be run once for AWS account and region combination. The step will create the necessary Lambda function that acts as the CloudFormation resource for all stacks created by lambda-tools. The command assumes that you have configured [AWS CLI](https://aws.amazon.com/cli/) with your credentials and a default region. If no region is defined, `us-east-1` is assumed. **If this step is not done, services with an `api.json` file will fail to deploy.**
+
+```
+lambda setup [-r aws-region-name]
+```
+
 ## Deploy
 
 ```
-lambda deploy -n project-name [-s stage-to-deploy] [-r aws-region-to-deploy-to] [-h]
+lambda deploy -n project-name [-s stage-to-deploy] [-r aws-region-to-deploy-to] [-e environment] [-h]
 ```
 
 Deployment of a service to AWS, goes through multiple steps during the process:
 
 1. Locally processes Lambda functions, using [browserify](http://browserify.org) and [uglify](https://github.com/mishoo/UglifyJS) to optimise the performance of the resulting functions
 2. Generates a CloudFormation template that is used to raise/update a stack on AWS
-3. Parses a [Swagger](http://swagger.io) definition for an API, autocompleting Lambda function ARNs and Lambda role ARNs
-4. Creates/Updates and deploys a REST API on API Gateway using definition built in (3.)
+3. Uploads Lambda function code, API definition (if any) and the compiled CloudFormation template to S3
+4. Creates/Updates the CF stack using the template and assets in S3
 
 ## Deploy (Single Lambda)
 
 ```
-lambda deploy-single -n function-name -f main.js [-r aws-region-to-deploy-to] [-h]
+lambda deploy-single -n function-name -f main.js [-r aws-region-to-deploy-to] [--env environment] [-h]
 ```
 
 Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3.
@@ -40,12 +48,12 @@ Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda 
 ## Execute
 
 ```
-lambda execute [-f lambda-file] [-e event-file] [-t timeout] [--e environment=value,foo=bar] [-h]
+lambda execute [-f lambda-file] [-e event-file] [-t timeout] [--env environment=value,foo=bar] [-h]
 ```
 
 Execute a single Lambda function from a file using an event read from a referenced JSON file. The script uses the same runtime environment as `lambda run` does for the service simulation, this means the Lambda function is run in an isolated process, hiding environment variables of the parent process and soft-simulating the way AWS runs Lambda functions.
 
-By default, timeout is set to 10 seconds, event file is assumed to be `event.json` and Lambda function located in `index.js` of the current working directory.
+By default, timeout is set to 6 seconds, event file is assumed to be `event.json` and Lambda function located in `index.js` of the current working directory.
 
 ## Run
 

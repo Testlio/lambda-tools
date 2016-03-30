@@ -1,0 +1,66 @@
+{
+    "Type": "Custom::APIGateway",
+    "DependsOn": [
+        {{~it.dependencies :value:idx}}
+        "{{=value}}"{{? idx < it.dependencies.length - 1}},{{?}}
+        {{~}}
+    ],
+    "Properties": {
+        "ServiceToken": {
+            "Fn::Join": [
+                ":",
+                [
+                    "arn:aws:lambda",
+                    {
+                        "Ref": "AWS::Region"
+                    },
+                    {
+                        "Ref": "AWS::AccountId"
+                    },
+                    "function:{{=it.lambda.name}}:{{=it.lambda.alias}}"
+                ]
+            ]
+        },
+        "Definition": {
+            "S3Bucket": "{{=it.s3.bucket}}",
+            "S3Key": "{{=it.s3.key}}"
+        },
+        "StageName": "{{=it.stageName}}",
+        "Variables": {
+            {{~it.variables :value:idx}}
+            "{{=value.key}}": {
+                "Fn::Join": [
+                    "/",
+                    [
+                        {{? value.lambda }}
+                        {
+                            "Fn::Join": [
+                                ":",
+                                [
+                                    "arn:aws:apigateway",
+                                    {
+                                        "Ref": "AWS::Region"
+                                    },
+                                    "lambda",
+                                    "path"
+                                ]
+                            ]
+                        },
+                        "2015-03-31",
+                        "functions",
+                        {{?}}
+                        {
+                            "Fn::GetAtt": [
+                                "{{=value.value}}",
+                                "Arn"
+                            ]
+                        }{{? value.lambda }},
+                        "invocations"
+                        {{?}}
+                    ]
+                ]
+            }{{? idx < it.variables.length - 1}},{{?}}
+            {{~}}
+        }
+    }
+}

@@ -7,6 +7,7 @@ const packageVersion = require('../package.json').version;
 
 program
   .version(packageVersion)
+  .command('setup', 'setup lambda-tools on AWS')
   .command('deploy', 'deploy Lambda based microservice to AWS')
   .command('deploy-single', 'deploy a single Lambda function to AWS')
   .command('run', 'run Lambda based microservice locally', { isDefault: true })
