@@ -17,7 +17,7 @@
                     {
                         "Ref": "AWS::AccountId"
                     },
-                    "function:{{=it.lambda.name}}:{{=it.lambda.alias}}"
+                    "function:{{=it.lambda.name}}"
                 ]
             ]
         },
