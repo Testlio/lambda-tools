@@ -1,6 +1,8 @@
 "use strict";
 
 require('colors');
+const http = require('http');
+const fs = require('fs');
 const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
@@ -10,10 +12,10 @@ const parseEnvironment = require('../lib/helpers/environment-parser.js');
 const parsePath = require('../lib/helpers/path-parser.js');
 const Route = require('../lib/run/route');
 
-const parser = require('koa-body')();
-const app = require('koa')();
-const router = require('koa-router')();
-const logger = require('koa-logger')();
+const koaApp = require('koa');
+const koaParser = require('koa-body');
+const koaRouter = require('koa-router');
+const koaLogger = require('koa-logger');
 
 const cwd = process.cwd();
 
@@ -40,42 +42,73 @@ if (!program.environment['BASE_URL']) {
     program.environment['BASE_URL'] = 'http://localhost:' + program.port;
 }
 
-// Parse API definition into a set of routes
-swagger.validate(program.apiFile, function(err, api) {
-    if (err) {
-        console.log("Failed to validate Swagger API definition".red);
-        console.error(err);
-        process.exit();
+function * genericErrorHandler(next) {
+    // Generic error handler
+    try {
+        yield next;
+    } catch (innerError) {
+        this.status = innerError.status || 500;
+        this.body = innerError.message;
+        console.error(innerError.stack);
+        console.error(innerError.message);
+    }
+}
+
+let server;
+function restartServer(apiFile, port) {
+    if (server) {
+        server.close();
+        server = undefined;
+        console.log(`Stopped server on ${port}`.red);
     }
 
-    // For each of the paths in the API, we want to set up a route that handles it
-    _.forEach(api.paths, function(methods, apiPath) {
-        _.forEach(methods, function(definition, method) {
-            // Convert path to be koa-router suitable (variables are listed differently)
-            const parsedPath = apiPath.replace(/\{([^\}\/]*)\}/g, ':$1');
+    // Parse API definition into a set of routes and kick start the Koa app
+    swagger.validate(apiFile, function(err, api) {
+        if (err) {
+            console.error('Failed to start server'.red, err.message);
+            console.error(err.stack);
+            return;
+        }
 
-            // Set up the route for the path
-            router[method](parsedPath, Route(_.get(definition, 'x-amazon-apigateway-integration'), program));
+        const router = koaRouter();
+
+        // For each of the paths in the API, we want to set up a route that handles it
+        _.forEach(api.paths, function(methods, apiPath) {
+            _.forEach(methods, function(definition, method) {
+                // Convert path to be koa-router suitable (variables are listed differently)
+                const parsedPath = apiPath.replace(/\{([^\}\/]*)\}/g, ':$1');
+
+                // Set up the route for the path
+                router[method](parsedPath, Route(_.get(definition, 'x-amazon-apigateway-integration'), program));
+            });
         });
+
+        const app = koaApp();
+        const logger = koaLogger();
+        const parser = koaParser();
+
+        app
+            .use(genericErrorHandler)
+            .use(logger)
+            .use(parser)
+            .use(router.routes())
+            .use(router.allowedMethods());
+
+        server = http.createServer(app.callback());
+        server.listen(port);
+        console.log(`Server listening on ${program.port}`.green);
     });
+}
 
-    app
-        .use(function *(next) {
-            // Generic error handler
-            try {
-                yield next;
-            } catch (innerError) {
-                this.status = innerError.status || 500;
-                this.body = innerError.message;
-                console.error(innerError.stack);
-                console.error(innerError.message);
-            }
-        })
-        .use(logger)
-        .use(parser)
-        .use(router.routes())
-        .use(router.allowedMethods());
+restartServer(program.apiFile, program.port);
 
-    app.listen(program.port);
-    console.log(("Server listening on " + program.port).green);
+// Watch API definition
+fs.watch(program.apiFile, {
+    persistent: true
+}, function(event, filename) {
+    if (event === 'change') {
+        // Definition has changed, restart our server
+        console.log('\nAPI definition changed, restarting server');
+        restartServer(filename, program.port);
+    }
 });
