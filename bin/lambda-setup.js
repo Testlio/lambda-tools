@@ -15,12 +15,7 @@ program
     .option('-r, --region <string>', 'Region to setup in, if not set otherwise, defaults to \'us-east-1\'')
     .parse(process.argv);
 
-const task = logger.task(`Setting up ${chalk.underline('lambda-tools')}`);
-createAPIGateway(program.region).then(function() {
-    task.finish();
-    logger.end();
-}, function(err) {
-    logger.error(err);
-    task.finish(err);
-    logger.end();
+
+logger.task(`Setting up ${chalk.underline('lambda-tools')}`, function(resolve, reject) {
+    createAPIGateway(program.region).then(resolve, reject);
 });
