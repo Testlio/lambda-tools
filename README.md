@@ -51,7 +51,7 @@ Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda 
 lambda execute [-e event-file] [-t timeout] [--env environment=value,foo=bar] [-h] [lambda-function]
 ```
 
-Execute a single Lambda function with a specified event, timeout and environment. The `lambda-function` argument can be specified in multiple ways:
+Execute a single Lambda function with specified event, timeout and environment values. The `lambda-function` argument can be specified in multiple ways:
 
 1. As a file path, in which case the file is assumed to be the handler
 2. As a file name, in which case the file is expected to exist in the current directory
