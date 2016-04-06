@@ -107,6 +107,6 @@ logger.task(`Executing: ${chalk.underline(program.file)}`, function(resolve, rej
         logger.error(`Failed '${err.message}'\n`);
         reject(err);
     });
-}).catch(function(err) {
+}).catch(function() {
     // Ignore, here so that we don't get unhandled rejection errors
 });
