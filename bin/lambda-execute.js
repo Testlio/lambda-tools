@@ -17,7 +17,7 @@ const cwd = process.cwd();
 
 program
     .usage('[options] <lambda-file>')
-    .option('-e, --event <file|string>', 'Path to the event JSON file, defaults to \'event.json\'', parsePath, 'event.json')
+    .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', parsePath, 'event.json')
     .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
     .option('--no-color', 'Turn off ANSI coloring in output')
