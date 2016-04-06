@@ -32,12 +32,14 @@ program
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
 //
 // Configure program
 //
 
+chalk.enabled = program.color;
 program.projectName = program.projectName || prompt.question('Please enter project name: ');
 
 // Make region global for AWS

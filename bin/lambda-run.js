@@ -28,7 +28,10 @@ program
     .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', parsePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--mirror-environment', 'Mirror the environment visible to lambda-tools in the lambda functions')
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
+
+chalk.enabled = program.color;
 
 // Determine our target directory
 program.directory = process.cwd();

@@ -30,12 +30,15 @@ program
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
     .option('--exclude', 'Packages to exclude from bundling', function(value) { return value.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
 //
 // Configure program
 //
 
+
+chalk.enabled = program.color;
 program.functionName = program.functionName || prompt.question('Please enter the name of the function you are deploying: ');
 
 // Make region global for AWS
