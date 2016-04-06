@@ -81,13 +81,13 @@ let promise = new Promise(function(resolve) {
 // Process Lambdas
 promise = promise.then(processing);
 
-// // Derive API configuration and then stack one
-// promise = promise.then(deriveAPI).then(deriveStack);
-//
-// // Deploying the stack (OPTIONAL)
-// if (!program.dryRun) {
-//     promise = promise.then(fetchStack).then(deployStack);
-// }
+// Derive API configuration and then stack one
+promise = promise.then(deriveAPI).then(deriveStack);
+
+// Deploying the stack (OPTIONAL)
+if (!program.dryRun) {
+    promise = promise.then(fetchStack).then(deployStack);
+}
 
 promise.then(function() {
     const rainbow = rw.pattern();
