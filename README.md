@@ -55,7 +55,7 @@ Execute a single Lambda function with specified event, timeout and environment v
 
 1. As a file path, in which case the file is assumed to be the handler
 2. As a file name, in which case the file is expected to exist in the current directory
-3. If executed inside of a service, `lambda-function` can be the name of the function to execute, I.e the name of the subdirectory in `lambdas`, where the Lambda function is.
+3. If executed inside of a service, `lambda-function` can be the name of the function to execute, i.e the name of the subdirectory in `lambdas`, where the Lambda function is.
 
 In any of these cases, an event file is located as follows:
 
