@@ -1,15 +1,17 @@
 "use strict";
 
-require('../lib/helpers/string-additions');
 const parseEnvironment = require('../lib/helpers/environment-parser');
 
-require('colors');
 const AWS = require('aws-sdk');
+const chalk = require('chalk');
 const path = require('path');
 const program = require('commander');
 const Promise = require('bluebird');
 const prompt = require('readline-sync');
 const _ = require('lodash');
+
+const hype = require('../lib/helpers/lambdahype');
+const logger = require('../lib/helpers/logger').shared;
 
 const setup = require('../lib/deploy/setup-step');
 const processing = require('../lib/deploy/bundle-lambdas-step');
@@ -30,12 +32,14 @@ program
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
 //
 // Configure program
 //
 
+chalk.enabled = program.color;
 program.projectName = program.projectName || prompt.question('Please enter project name: ');
 
 // Make region global for AWS
@@ -62,18 +66,18 @@ const context = {
         timestamp: Math.floor(Date.now() / 1000)
     },
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude']),
+    logger: logger
 };
 
 // Setup step
 let promise = new Promise(function(resolve) {
     const dryRunString = program.dryRun ? ' (dry run)' : '';
-    console.log('Deploying ' + program.projectName.underline + ' ' + program.stage.underline + ' to ' + program.region.underline + dryRunString);
+
+    logger.log(`Deploying ${chalk.underline(program.projectName)} ${chalk.underline(program.stage)} to ${chalk.underline(program.region)}${dryRunString}`);
+
     resolve(context);
-}).then(setup).then(function(ctx) {
-    console.log('Staging directory at ' + ctx.directories.staging);
-    return ctx;
-});
+}).then(setup);
 
 // Process Lambdas
 promise = promise.then(processing);
@@ -87,8 +91,9 @@ if (!program.dryRun) {
 }
 
 promise.then(function() {
-    console.log('\nDeployment complete ' + '#lambdahype'.rainbow);
+    logger.log(chalk.bold('Deployment complete'));
+    logger.log(hype);
 }).catch(function(error) {
-    console.error('\nDeployment failed'.bold.red, error.message, error.stack);
+    logger.error(chalk.bold.red('Deployment failed'), error.message, error.stack);
     process.exit(1);
 });

@@ -1,7 +1,6 @@
 "use strict";
 
-require('colors');
-
+const chalk = require('chalk');
 const fsx = require('../lib/helpers/fs-additions');
 const program = require('commander');
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
@@ -20,7 +19,10 @@ program
     .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', parsePath, path.resolve(cwd, 'event.json'))
     .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
+
+chalk.enabled = program.color;
 
 // Determine our target directory
 program.directory = cwd;
@@ -33,24 +35,24 @@ const context = {
     timeout: program.timeout
 };
 
-console.log('Executing Lambda function'.bold.green);
-console.log('File: ' + program.file.yellow + ', Event: ' + program.event.yellow);
+console.log(chalk.bold.green('Executing Lambda function'));
+console.log('File: ' + chalk.yellow(program.file) + ', Event: ' + chalk.yellow(program.event));
 console.log('\tWith event:');
 console.log('\t' + JSON.stringify(event, null, '\t').split('\n').join('\n\t'), '\n');
-console.log('\t--'.gray);
+console.log(chalk.gray('\t--'));
 
 const promise = Execution(program.file, event, context, program.environment).next().value;
 
 promise.then(function(result) {
-    console.log('\t--'.gray);
-    console.log('Lambda executed'.bold.green);
-    console.log('\t--'.gray);
+    console.log(chalk.gray('\t--'));
+    console.log(chalk.bold.green('Lambda executed'));
+    console.log(chalk.gray('\t--'));
 
     console.log('Result:', result);
 }).catch(function(error) {
-    console.log('\t--'.gray);
-    console.log('Lambda failed'.bold.red);
-    console.log('\t--'.gray);
+    console.log(chalk.gray('\t--'));
+    console.log(chalk.bold.red('Lambda failed'));
+    console.log(chalk.gray('\t--'));
 
     console.error('Error: ', error.message);
 });

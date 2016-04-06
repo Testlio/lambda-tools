@@ -1,6 +1,6 @@
 "use strict";
 
-require('colors');
+const chalk = require('chalk');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -28,7 +28,10 @@ program
     .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', parsePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--mirror-environment', 'Mirror the environment visible to lambda-tools in the lambda functions')
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
+
+chalk.enabled = program.color;
 
 // Determine our target directory
 program.directory = process.cwd();
@@ -59,13 +62,13 @@ function restartServer(apiFile, port) {
     if (server) {
         server.close();
         server = undefined;
-        console.log(`Stopped server on ${port}`.red);
+        console.log(chalk.red(`Stopped server on ${port}`));
     }
 
     // Parse API definition into a set of routes and kick start the Koa app
     swagger.validate(apiFile, function(err, api) {
         if (err) {
-            console.error('Failed to start server'.red, err.message);
+            console.error(chalk.red('Failed to start server'), err.message);
             console.error(err.stack);
             return;
         }
@@ -96,7 +99,7 @@ function restartServer(apiFile, port) {
 
         server = http.createServer(app.callback());
         server.listen(port);
-        console.log(`Server listening on ${program.port}`.green);
+        console.log(chalk.green(`Server listening on ${program.port}`));
     });
 }
 
