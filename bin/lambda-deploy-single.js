@@ -1,6 +1,7 @@
 "use strict";
 
 const AWS = require('aws-sdk');
+const chalk = require('chalk');
 const fsx = require('../lib/helpers/fs-additions');
 const path = require('path');
 const parseEnvironment = require('../lib/helpers/environment-parser');
