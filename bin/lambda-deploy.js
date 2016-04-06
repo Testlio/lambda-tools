@@ -1,6 +1,5 @@
 "use strict";
 
-require('../lib/helpers/string-additions');
 const parseEnvironment = require('../lib/helpers/environment-parser');
 
 const AWS = require('aws-sdk');
