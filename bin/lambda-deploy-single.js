@@ -9,7 +9,8 @@ const prompt = require('readline-sync');
 const Promise = require('bluebird');
 const _ = require('lodash');
 
-require('colors');
+const hype = require('../lib/helpers/lambdahype');
+const logger = require('../lib/helpers/logger').shared;
 
 const bundleLambdas = require('../lib/deploy/bundle-lambdas-step');
 const updateLambdas = require('../lib/deploy/update-lambdas-step');
@@ -57,21 +58,22 @@ const context = {
         path: lambdaPath
     }],
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude']),
+    logger: logger
 };
 
 // Prepare staging directory
 try {
     fsx.recreateDirectory(context.directories.staging);
 } catch (error) {
-    console.error(error);
+    logger.error(error);
     process.exit(1);
 }
 
 // Bundle Lambda
 let promise = new Promise(function(resolve) {
-    console.log('Deploying Lambda function "' + context.lambdas[0].name + '"' + (program.dryRun ? ' (dry run)' : ''));
-    console.log('Staging directory at ' + context.directories.staging);
+    logger.log('Deploying Lambda function "' + context.lambdas[0].name + '"' + (program.dryRun ? ' (dry run)' : ''));
+    logger.log('Staging directory at ' + context.directories.staging);
     resolve(context);
 }).then(bundleLambdas);
 
@@ -81,8 +83,9 @@ if (!program.dryRun) {
 }
 
 promise.then(function() {
-    console.log('\nDeployment complete ' + '#lambdahype'.rainbow);
+    logger.log(chalk.bold('Deployment complete'));
+    logger.log(hype);
 }).catch(function(err) {
-    console.error('\nDeployment failed'.bold.red, err.message, err.stack);
+    logger.error('Deployment failed'.bold.red, err.message, err.stack);
     process.exit(1);
 });

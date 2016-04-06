@@ -8,9 +8,9 @@ const path = require('path');
 const program = require('commander');
 const Promise = require('bluebird');
 const prompt = require('readline-sync');
-const rw = require('rainbow-word');
 const _ = require('lodash');
 
+const hype = require('../lib/helpers/lambdahype');
 const logger = require('../lib/helpers/logger').shared;
 
 const setup = require('../lib/deploy/setup-step');
@@ -89,10 +89,8 @@ if (!program.dryRun) {
 }
 
 promise.then(function() {
-    const rainbow = rw.pattern();
-    const hype = rainbow.convert('#lambdahype'.split(''));
-
-    logger.log(`${chalk.bold('Deployment complete')} ${hype}`);
+    logger.log(chalk.bold('Deployment complete'));
+    logger.log(hype);
 }).catch(function(error) {
     logger.error(chalk.bold.red('Deployment failed'), error.message, error.stack);
     process.exit(1);
