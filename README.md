@@ -48,12 +48,22 @@ Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda 
 ## Execute
 
 ```
-lambda execute [-f lambda-file] [-e event-file] [-t timeout] [--env environment=value,foo=bar] [-h]
+lambda execute [-e event-file] [-t timeout] [--env environment=value,foo=bar] [-h] [lambda-function]
 ```
 
-Execute a single Lambda function from a file using an event read from a referenced JSON file. The script uses the same runtime environment as `lambda run` does for the service simulation, this means the Lambda function is run in an isolated process, hiding environment variables of the parent process and soft-simulating the way AWS runs Lambda functions.
+Execute a single Lambda function with a specified event, timeout and environment. The `lambda-function` argument can be specified in multiple ways:
 
-By default, timeout is set to 6 seconds, event file is assumed to be `event.json` and Lambda function located in `index.js` of the current working directory.
+1. As a file path, in which case the file is assumed to be the handler
+2. As a file name, in which case the file is expected to exist in the current directory
+3. If executed inside of a service, `lambda-function` can be a name of the function to execute, i.e the name of the subdirectory in `lambdas`, where the Lambda function is.
+
+In any of these cases, an event file is located as follows:
+
+1. If a file argument was specified, it is checked relative to the location of the Lambda function (the location of the `index.js` being executed)
+2. If the argument is specified, it is checked relative to the current working directory (the location where `lambda execute` is running from)
+3. If neither of those exists, then an empty event is used as a fallback. Similarly, if either file fails to parse as valid JSON.
+
+By default, the event file is assumed to be `event.json` and the timeout is set to 6 seconds. The environment is empty (i.e the running environment is not mirrored).
 
 ## Run
 
