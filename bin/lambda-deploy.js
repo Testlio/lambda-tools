@@ -3,13 +3,16 @@
 require('../lib/helpers/string-additions');
 const parseEnvironment = require('../lib/helpers/environment-parser');
 
-require('colors');
 const AWS = require('aws-sdk');
+const chalk = require('chalk');
 const path = require('path');
 const program = require('commander');
 const Promise = require('bluebird');
 const prompt = require('readline-sync');
+const rw = require('rainbow-word');
 const _ = require('lodash');
+
+const logger = require('../lib/helpers/logger').shared;
 
 const setup = require('../lib/deploy/setup-step');
 const processing = require('../lib/deploy/bundle-lambdas-step');
@@ -62,33 +65,36 @@ const context = {
         timestamp: Math.floor(Date.now() / 1000)
     },
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude']),
+    logger: logger
 };
 
 // Setup step
 let promise = new Promise(function(resolve) {
     const dryRunString = program.dryRun ? ' (dry run)' : '';
-    console.log('Deploying ' + program.projectName.underline + ' ' + program.stage.underline + ' to ' + program.region.underline + dryRunString);
+
+    logger.log(`Deploying ${chalk.underline(program.projectName)} ${chalk.underline(program.stage)} to ${chalk.underline(program.region)}${dryRunString}`);
+
     resolve(context);
-}).then(setup).then(function(ctx) {
-    console.log('Staging directory at ' + ctx.directories.staging);
-    return ctx;
-});
+}).then(setup);
 
 // Process Lambdas
 promise = promise.then(processing);
 
-// Derive API configuration and then stack one
-promise = promise.then(deriveAPI).then(deriveStack);
-
-// Deploying the stack (OPTIONAL)
-if (!program.dryRun) {
-    promise = promise.then(fetchStack).then(deployStack);
-}
+// // Derive API configuration and then stack one
+// promise = promise.then(deriveAPI).then(deriveStack);
+//
+// // Deploying the stack (OPTIONAL)
+// if (!program.dryRun) {
+//     promise = promise.then(fetchStack).then(deployStack);
+// }
 
 promise.then(function() {
-    console.log('\nDeployment complete ' + '#lambdahype'.rainbow);
+    const rainbow = rw.pattern();
+    const hype = rainbow.convert('#lambdahype'.split(''));
+
+    logger.log(`${chalk.bold('Deployment complete')} ${hype}`);
 }).catch(function(error) {
-    console.error('\nDeployment failed'.bold.red, error.message, error.stack);
+    logger.error(chalk.bold.red('Deployment failed'), error.message, error.stack);
     process.exit(1);
 });
