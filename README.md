@@ -41,6 +41,10 @@ lambda deploy-single -n function-name -f main.js [-r aws-region-to-deploy-to] [-
 
 Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3.
 
+### Caching
+
+Both `deploy` and `deploy-single` implement a caching logic to avoid the costly bundling process of Lambda functions. This cache checks the code by generating a manifest of it (a checksum of the main handler file + a full list of dependencies it requires), if the manifest matches the one that is present from a previous deploy, the resulting ZIP file can be reused. To circumvent this cache, use the `--clean` flag, forcing bundling.
+
 ### Authentication
 
 `lambda deploy` and `lambda deploy-single` assume you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
