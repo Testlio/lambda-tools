@@ -69,7 +69,7 @@ const context = {
 
 // Prepare staging directory
 try {
-    fsx.createDirectory(context.directories.staging);
+    fsx.ensureDirectory(context.directories.staging);
 } catch (error) {
     logger.error(error);
     process.exit(1);
