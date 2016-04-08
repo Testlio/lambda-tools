@@ -1,7 +1,8 @@
 "use strict";
 
 const chalk = require('chalk');
-const http = require('http');
+const Promise = require('bluebird');
+const http = Promise.promisifyAll(require('http'));
 const fs = require('fs');
 const path = require('path');
 const program = require('commander');
@@ -59,47 +60,52 @@ function * genericErrorHandler(next) {
 
 let server;
 function restartServer(apiFile, port) {
+    let promise = Promise.resolve();
+
     if (server) {
-        server.close();
-        server = undefined;
-        console.log(chalk.red(`Stopped server on ${port}`));
+        promise = server.closeAsync().then(function() {
+            server = undefined;
+            console.log(chalk.red(`Stopped server on ${port}`));
+        });
     }
 
     // Parse API definition into a set of routes and kick start the Koa app
-    swagger.validate(apiFile, function(err, api) {
-        if (err) {
-            console.error(chalk.red('Failed to start server'), err.message);
-            console.error(err.stack);
-            return;
-        }
+    promise.then(function() {
+        swagger.validate(apiFile, function(err, api) {
+            if (err) {
+                console.error(chalk.red('Failed to start server'), err.message);
+                console.error(err.stack);
+                return;
+            }
 
-        const router = koaRouter();
+            const router = koaRouter();
 
-        // For each of the paths in the API, we want to set up a route that handles it
-        _.forEach(api.paths, function(methods, apiPath) {
-            _.forEach(methods, function(definition, method) {
-                // Convert path to be koa-router suitable (variables are listed differently)
-                const parsedPath = apiPath.replace(/\{([^\}\/]*)\}/g, ':$1');
+            // For each of the paths in the API, we want to set up a route that handles it
+            _.forEach(api.paths, function(methods, apiPath) {
+                _.forEach(methods, function(definition, method) {
+                    // Convert path to be koa-router suitable (variables are listed differently)
+                    const parsedPath = apiPath.replace(/\{([^\}\/]*)\}/g, ':$1');
 
-                // Set up the route for the path
-                router[method](parsedPath, Route(_.get(definition, 'x-amazon-apigateway-integration'), program));
+                    // Set up the route for the path
+                    router[method](parsedPath, Route(_.get(definition, 'x-amazon-apigateway-integration'), program));
+                });
             });
+
+            const app = koaApp();
+            const logger = koaLogger();
+            const parser = koaParser();
+
+            app
+                .use(genericErrorHandler)
+                .use(logger)
+                .use(parser)
+                .use(router.routes())
+                .use(router.allowedMethods());
+
+            server = http.createServer(app.callback());
+            server.listen(port);
+            console.log(chalk.green(`Server listening on ${program.port}`));
         });
-
-        const app = koaApp();
-        const logger = koaLogger();
-        const parser = koaParser();
-
-        app
-            .use(genericErrorHandler)
-            .use(logger)
-            .use(parser)
-            .use(router.routes())
-            .use(router.allowedMethods());
-
-        server = http.createServer(app.callback());
-        server.listen(port);
-        console.log(chalk.green(`Server listening on ${program.port}`));
     });
 }
 
