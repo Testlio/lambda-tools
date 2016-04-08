@@ -30,6 +30,7 @@ program
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
     .option('--exclude', 'Packages to exclude from bundling', function(value) { return value.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
+    .option('--clean', 'Force a clean build where cached bundles are not used')
     .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
@@ -62,7 +63,7 @@ const context = {
         path: lambdaPath
     }],
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude']),
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude', 'clean']),
     logger: logger
 };
 
