@@ -46,7 +46,6 @@
     "lodash": "^4.8.x",
     "moment": "^2.11.0",
     "node-uuid": "^1.4.7",
-    "os-tmpdir": "^1.0.1",
     "readline-sync": "^1.2.21",
     "resolve": "^1.1.7",
     "simple-archiver": "^0.1.3",
