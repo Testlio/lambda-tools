@@ -10,6 +10,7 @@ const Promise = require('bluebird');
 const prompt = require('readline-sync');
 const _ = require('lodash');
 
+const config = require('../lib/helpers/config');
 const hype = require('../lib/helpers/lambdahype');
 const logger = require('../lib/helpers/logger').shared;
 
@@ -26,8 +27,8 @@ const deployStack = require('../lib/deploy/update-stack-step');
 
 program
     .option('-n, --project-name <name>', 'Project name')
-    .option('-s, --stage <stage>', 'Stage name', 'dev')
-    .option('-r, --region <region>', 'Region', 'us-east-1')
+    .option('-s, --stage <stage>', 'Stage name')
+    .option('-r, --region <region>', 'Region')
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
@@ -40,8 +41,13 @@ program
 // Configure program
 //
 
+// Enable/Disable colors
 chalk.enabled = program.color;
-program.projectName = program.projectName || prompt.question('Please enter project name: ');
+
+// Finalise configuration
+program.region = program.region || config.aws.region;
+program.stage = program.stage || config.aws.stage;
+program.projectName = program.projectName || config.project.name || prompt.question('Please enter project name: ');
 
 // Make region global for AWS
 AWS.config.region = program.region;

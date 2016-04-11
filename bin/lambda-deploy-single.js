@@ -10,6 +10,7 @@ const prompt = require('readline-sync');
 const Promise = require('bluebird');
 const _ = require('lodash');
 
+const config = require('../lib/helpers/config');
 const hype = require('../lib/helpers/lambdahype');
 const logger = require('../lib/helpers/logger').shared;
 
@@ -24,7 +25,7 @@ program
     .description('Deploy code to a single Lambda function')
     .option('-n, --function-name <name>', 'Function name')
     .option('-f, --file <file>', 'Lambda file location', './index.js')
-    .option('-r, --region <region>', 'AWS region to work in', 'us-east-1')
+    .option('-r, --region <region>', 'AWS region to work in')
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
     .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment, {})
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
@@ -38,12 +39,14 @@ program
 // Configure program
 //
 
-
+// Enable/Disable colors
 chalk.enabled = program.color;
+
+// Determine function name
 program.functionName = program.functionName || prompt.question('Please enter the name of the function you are deploying: ');
 
 // Make region global for AWS
-AWS.config.region = program.region;
+AWS.config.region = program.region || config.aws.region;
 program.environment['AWS_REGION'] = program.region;
 
 // Create context

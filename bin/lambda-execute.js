@@ -7,6 +7,7 @@ const parseEnvironment = require('../lib/helpers/environment-parser.js');
 const parsePath = require('../lib/helpers/path-parser.js');
 const path = require('path');
 const logger = require('../lib/helpers/logger.js').shared;
+const config = require('../lib/helpers/config.js');
 
 const Execution = require('../lib/run/execution');
 const cwd = process.cwd();
@@ -23,7 +24,13 @@ program
     .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
+// Enable/Disable colors
 chalk.enabled = program.color;
+
+// Carry over some stuff to environment
+program.environment["AWS_REGION"] = config.aws.region;
+program.environment["AWS_STAGE"] = config.aws.stage;
+program.environment["AWS_PROJECT_NAME"] = config.project.name;
 
 // Check if we were given a Lambda function. Steps for searching are:
 // 1. If provided string is a file in current directory, it'll be used

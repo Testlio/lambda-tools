@@ -12,6 +12,24 @@ Install the tools via npm, this will make the following commands available in th
 npm install @testlio/lambda-tools -g
 ```
 
+## Configuration file
+
+All scripts may make use of a `.lambda-tools-rc.json` file in the root of the project (that is, the location of `package.json` that is closest to Lambda functions). This allows defining some meaningful defaults for the scripts, such as a default stage, region and a project name. An example content of said file could be
+
+```
+{
+    "project": {
+        "name": "Project Name"
+    },
+    "aws": {
+        "region": "us-east-1",
+        "stage": "dev"
+    }
+}
+```
+
+These defaults are used for deployment and running the service locally, which is useful for example when creating dynamic resource names that rely on the stage and project names.
+
 ## Setup
 
 This step should only ever be run once for AWS account and region combination. The step will create the necessary Lambda function that acts as the CloudFormation resource for all stacks created by lambda-tools. The command assumes that you have configured [AWS CLI](https://aws.amazon.com/cli/) with your credentials and a default region. If no region is defined, `us-east-1` is assumed. **If this step is not done, services with an `api.json` file will fail to deploy.**
