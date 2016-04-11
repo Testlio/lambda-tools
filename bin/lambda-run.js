@@ -9,6 +9,7 @@ const program = require('commander');
 const swagger = require('swagger-parser');
 const _ = require('lodash');
 
+const config = require('../lib/helpers/config.js');
 const parseEnvironment = require('../lib/helpers/environment-parser.js');
 const parsePath = require('../lib/helpers/path-parser.js');
 const Route = require('../lib/run/route');
@@ -32,6 +33,7 @@ program
     .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
+// Enable/Disable colors
 chalk.enabled = program.color;
 
 // Determine our target directory
@@ -45,6 +47,10 @@ if (program.mirrorEnvironment) {
 if (!program.environment['BASE_URL']) {
     program.environment['BASE_URL'] = 'http://localhost:' + program.port;
 }
+
+program.environment["AWS_REGION"] = program.environment.region || 'us-east-1';
+program.environment["AWS_STAGE"] = program.environment.stage || 'dev';
+program.environment["AWS_PROJECT_NAME"] = config.project.name;
 
 function * genericErrorHandler(next) {
     // Generic error handler
