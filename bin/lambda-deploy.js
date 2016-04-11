@@ -46,7 +46,7 @@ chalk.enabled = program.color;
 
 // Finalise configuration
 program.region = program.region || config.aws.region;
-program.stage = program.stage || config.aws.stage;
+program.stage = program.stage || config.aws.stage;
 program.projectName = program.projectName || config.project.name || prompt.question('Please enter project name: ');
 
 // Make region global for AWS

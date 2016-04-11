@@ -49,7 +49,7 @@ if (!program.environment['BASE_URL']) {
 }
 
 program.environment["AWS_REGION"] = program.environment.region || 'us-east-1';
-program.environment["AWS_STAGE"] = program.environment.stage || 'dev';
+program.environment["AWS_STAGE"] = program.environment.stage || 'dev';
 program.environment["AWS_PROJECT_NAME"] = config.project.name;
 
 function * genericErrorHandler(next) {

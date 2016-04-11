@@ -10,6 +10,7 @@ const prompt = require('readline-sync');
 const Promise = require('bluebird');
 const _ = require('lodash');
 
+const config = require('../lib/helpers/config');
 const hype = require('../lib/helpers/lambdahype');
 const logger = require('../lib/helpers/logger').shared;
 
