@@ -8,6 +8,7 @@ const parseEnvironment = require('../lib/helpers/environment-parser');
 const program = require('commander');
 const prompt = require('readline-sync');
 const Promise = require('bluebird');
+const os = require('os');
 const _ = require('lodash');
 
 const config = require('../lib/helpers/config');
@@ -55,7 +56,7 @@ const context = {
     directories: {
         cwd: process.cwd(),
         root: path.join(path.resolve(__dirname), '../lib/deploy'),
-        staging: path.join(path.resolve(__dirname), '../lib/deploy', 'lambda_stage')
+        staging: path.resolve(os.tmpdir(), `lambda-tools-single-${program.functionName}`)
     },
 
     lambdas: [{
