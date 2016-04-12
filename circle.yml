@@ -10,4 +10,4 @@ deployment:
     prod:
         tag: /v[0-9]+(\.[0-9]+)*/
         commands:
-            - npm publish || true
+            - npm publish

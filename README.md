@@ -12,6 +12,24 @@ Install the tools via npm, this will make the following commands available in th
 npm install lambda-tools -g
 ```
 
+## Configuration file
+
+All scripts may make use of a `.lambda-tools-rc.json` file in the root of the project (that is, the location of `package.json` that is closest to Lambda functions). This allows defining some meaningful defaults for the scripts, such as a default stage, region and a project name. An example content of said file could be
+
+```
+{
+    "project": {
+        "name": "Project Name"
+    },
+    "aws": {
+        "region": "us-east-1",
+        "stage": "dev"
+    }
+}
+```
+
+These defaults are used for deployment and running the service locally, which is useful for example when creating dynamic resource names that rely on the stage and project names.
+
 ## Setup
 
 This step should only ever be run once for AWS account and region combination. The step will create the necessary Lambda function that acts as the CloudFormation resource for all stacks created by lambda-tools. The command assumes that you have configured [AWS CLI](https://aws.amazon.com/cli/) with your credentials and a default region. If no region is defined, `us-east-1` is assumed. **If this step is not done, services with an `api.json` file will fail to deploy.**
@@ -41,6 +59,10 @@ lambda deploy-single -n function-name -f main.js [-r aws-region-to-deploy-to] [-
 
 Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3.
 
+### Caching
+
+Both `deploy` and `deploy-single` implement a caching logic to avoid the costly bundling process of Lambda functions. This cache checks the code by generating a manifest of it (a checksum of the main handler file + a full list of dependencies it requires), if the manifest matches the one that is present from a previous deploy, the resulting ZIP file can be reused. To circumvent this cache, use the `--clean` flag, forcing bundling.
+
 ### Authentication
 
 `lambda deploy` and `lambda deploy-single` assume you have configured AWS credentials [that can be reached by the script](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Setting_AWS_Credentials). The script uses AWS SDK for Node.js, which is able to automatically pick up credentials from various places, thus, the script itself does not allow modifying/storing credentials.
@@ -48,12 +70,22 @@ Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda 
 ## Execute
 
 ```
-lambda execute [-f lambda-file] [-e event-file] [-t timeout] [--env environment=value,foo=bar] [-h]
+lambda execute [-e event-file] [-t timeout] [--env environment=value,foo=bar] [-h] [lambda-function]
 ```
 
-Execute a single Lambda function from a file using an event read from a referenced JSON file. The script uses the same runtime environment as `lambda run` does for the service simulation, this means the Lambda function is run in an isolated process, hiding environment variables of the parent process and soft-simulating the way AWS runs Lambda functions.
+Execute a single Lambda function with specified event, timeout and environment values. The `lambda-function` argument can be specified in multiple ways:
 
-By default, timeout is set to 6 seconds, event file is assumed to be `event.json` and Lambda function located in `index.js` of the current working directory.
+1. As a file path, in which case the file is assumed to be the handler
+2. As a file name, in which case the file is expected to exist in the current directory
+3. If executed inside of a service, `lambda-function` can be the name of the function to execute, i.e the name of the subdirectory in `lambdas`, where the Lambda function is.
+
+In any of these cases, an event file is located as follows:
+
+1. If a file argument was specified, it is checked relative to the location of the Lambda function (the location of the `index.js` being executed)
+2. If the argument is specified, it is checked relative to the current working directory (the location where `lambda execute` is running from)
+3. If neither of those exists, then an empty event is used as a fallback. Similarly, if either file fails to parse as valid JSON.
+
+By default, the event file is assumed to be `event.json` and the timeout is set to 6 seconds. The environment is empty (i.e the running environment is not mirrored).
 
 ## Run
 

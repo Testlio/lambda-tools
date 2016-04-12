@@ -1,15 +1,19 @@
 "use strict";
 
 const AWS = require('aws-sdk');
+const chalk = require('chalk');
 const fsx = require('../lib/helpers/fs-additions');
 const path = require('path');
 const parseEnvironment = require('../lib/helpers/environment-parser');
 const program = require('commander');
 const prompt = require('readline-sync');
 const Promise = require('bluebird');
+const os = require('os');
 const _ = require('lodash');
 
-require('colors');
+const config = require('../lib/helpers/config');
+const hype = require('../lib/helpers/lambdahype');
+const logger = require('../lib/helpers/logger').shared;
 
 const bundleLambdas = require('../lib/deploy/bundle-lambdas-step');
 const updateLambdas = require('../lib/deploy/update-lambdas-step');
@@ -22,22 +26,28 @@ program
     .description('Deploy code to a single Lambda function')
     .option('-n, --function-name <name>', 'Function name')
     .option('-f, --file <file>', 'Lambda file location', './index.js')
-    .option('-r, --region <region>', 'AWS region to work in', 'us-east-1')
+    .option('-r, --region <region>', 'AWS region to work in')
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
     .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment, {})
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
-    .option('--exclude', 'Packages to exclude from bundling', function(value) { return value.split(','); })
+    .option('--exclude <list>', 'Packages to exclude from bundling', function(value) { return value.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
+    .option('--clean', 'Force a clean build where cached bundles are not used')
+    .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
 //
 // Configure program
 //
 
+// Enable/Disable colors
+chalk.enabled = program.color;
+
+// Determine function name
 program.functionName = program.functionName || prompt.question('Please enter the name of the function you are deploying: ');
 
 // Make region global for AWS
-AWS.config.region = program.region;
+AWS.config.region = program.region || config.aws.region;
 program.environment['AWS_REGION'] = program.region;
 
 // Create context
@@ -46,7 +56,7 @@ const context = {
     directories: {
         cwd: process.cwd(),
         root: path.join(path.resolve(__dirname), '../lib/deploy'),
-        staging: path.join(path.resolve(__dirname), '../lib/deploy', 'lambda_stage')
+        staging: path.resolve(os.tmpdir(), `lambda-tools-single-${program.functionName}`)
     },
 
     lambdas: [{
@@ -57,21 +67,22 @@ const context = {
         path: lambdaPath
     }],
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude'])
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude', 'clean']),
+    logger: logger
 };
 
 // Prepare staging directory
 try {
-    fsx.recreateDirectory(context.directories.staging);
+    fsx.ensureDirectory(context.directories.staging);
 } catch (error) {
-    console.error(error);
+    logger.error(error);
     process.exit(1);
 }
 
 // Bundle Lambda
 let promise = new Promise(function(resolve) {
-    console.log('Deploying Lambda function "' + context.lambdas[0].name + '"' + (program.dryRun ? ' (dry run)' : ''));
-    console.log('Staging directory at ' + context.directories.staging);
+    logger.log('Deploying Lambda function "' + context.lambdas[0].name + '"' + (program.dryRun ? ' (dry run)' : ''));
+    logger.log('Staging directory at ' + context.directories.staging);
     resolve(context);
 }).then(bundleLambdas);
 
@@ -81,8 +92,9 @@ if (!program.dryRun) {
 }
 
 promise.then(function() {
-    console.log('\nDeployment complete ' + '#lambdahype'.rainbow);
+    logger.log(chalk.bold('Deployment complete'));
+    logger.log(hype);
 }).catch(function(err) {
-    console.error('\nDeployment failed'.bold.red, err.message, err.stack);
+    logger.error('Deployment failed'.bold.red, err.message, err.stack);
     process.exit(1);
 });
