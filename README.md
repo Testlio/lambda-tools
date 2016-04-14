@@ -1,7 +1,5 @@
 # Lambda tools
 
-**This package is deprecated, please use the descoped package [lambda-tools](https://npmjs.com/package/lambda-tools) instead**
-
 [![Circle CI](https://circleci.com/gh/Testlio/lambda-tools.svg?style=svg&circle-token=dc3e9529742ff948e2dd4ef4fa9c07d2622e5a21)](https://circleci.com/gh/Testlio/lambda-tools)
 
 This repository contains a set of scripts that are useful when developing [AWS Lambda](https://aws.amazon.com/lambda/) backed microservices that rely on [AWS CloudFormation](https://aws.amazon.com/cloudformation/) and [AWS API Gateway](https://aws.amazon.com/api-gateway/).
@@ -11,7 +9,7 @@ This repository contains a set of scripts that are useful when developing [AWS L
 Install the tools via npm, this will make the following commands available in the directory that you ran the install command in (optionally, pass in `-g` to install the commands globally).
 
 ```
-npm install @testlio/lambda-tools -g
+npm install lambda-tools -g
 ```
 
 ## Configuration file
@@ -116,7 +114,7 @@ Root Directory of the service
     | ...
 ```
 
-As all Lambda functions are bundled and compressed during deployment, it is safe to share common code between Lambda functions in the top level of the microservice, for example in a directory called `common` or `lib`. Achieving this structure is easier by using [Yeoman](http://yeoman.io) and the [`@testlio/generator-lambda-tools` generators](https://www.npmjs.com/package/@testlio/generator-lambda-tools).
+As all Lambda functions are bundled and compressed during deployment, it is safe to share common code between Lambda functions in the top level of the microservice, for example in a directory called `common` or `lib`. Achieving this structure is easier by using [Yeoman](http://yeoman.io) and the [`generator-lambda-tools` generators](https://www.npmjs.com/package/generator-lambda-tools).
 
 #### Examples
 
