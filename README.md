@@ -1,4 +1,4 @@
-# Lambda tools
+# Lambda Tools
 
 [![Circle CI](https://circleci.com/gh/Testlio/lambda-tools.svg?style=svg&circle-token=dc3e9529742ff948e2dd4ef4fa9c07d2622e5a21)](https://circleci.com/gh/Testlio/lambda-tools)
 
