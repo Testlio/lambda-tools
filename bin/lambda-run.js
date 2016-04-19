@@ -48,15 +48,15 @@ if (!program.environment['BASE_URL']) {
     program.environment['BASE_URL'] = 'http://localhost:' + program.port;
 }
 
-if (config.aws.region) {
+if (config.aws.region && !program.environment["AWS_REGION"]) {
     program.environment["AWS_REGION"] = config.aws.region;
 }
 
-if (config.aws.stage) {
+if (config.aws.stage && !program.environment["AWS_REGION"]) {
     program.environment["AWS_STAGE"] = config.aws.stage;
 }
 
-if (config.project.name) {
+if (config.project.name && !program.environment["AWS_PROJECT_NAME"]) {
     program.environment["AWS_PROJECT_NAME"] = config.project.name;
 }
 

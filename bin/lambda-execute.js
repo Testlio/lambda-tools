@@ -29,15 +29,15 @@ program
 chalk.enabled = program.color;
 
 // Carry over some stuff to environment
-if (config.aws.region) {
+if (config.aws.region && !program.environment["AWS_REGION"]) {
     program.environment["AWS_REGION"] = config.aws.region;
 }
 
-if (config.aws.stage) {
+if (config.aws.stage && !program.environment["AWS_REGION"]) {
     program.environment["AWS_STAGE"] = config.aws.stage;
 }
 
-if (config.project.name) {
+if (config.project.name && !program.environment["AWS_PROJECT_NAME"]) {
     program.environment["AWS_PROJECT_NAME"] = config.project.name;
 }
 
