@@ -8,6 +8,7 @@ const parsePath = require('../lib/helpers/path-parser.js');
 const path = require('path');
 const logger = require('../lib/helpers/logger.js').shared;
 const config = require('../lib/helpers/config.js');
+const _ = require('lodash');
 
 const Execution = require('../lib/run/execution');
 const cwd = process.cwd();
@@ -56,8 +57,10 @@ if (program.args.length === 0) {
             // Check if cf.json exists, if so, then we can grab the handler file name from there
             const propertiesFile = path.resolve(proposedDir, 'cf.json');
             if (fsx.fileExists(propertiesFile)) {
-                const handlerFile = fsx.readJSONFileSync(propertiesFile).Properties.Handler.split('.')[0] + '.js';
-                program.file = path.resolve(proposedDir, handlerFile);
+                const handlerFile = fsx.readJSONFileSync(propertiesFile);
+                const handler = _.get(handlerFile, 'Properties.Handler', 'index.handler');
+
+                program.file = path.resolve(proposedDir, handler.split('.')[0] + '.js');
             } else {
                 // Assume it to be index.js
                 program.file = path.resolve(proposedDir, 'index.js');
