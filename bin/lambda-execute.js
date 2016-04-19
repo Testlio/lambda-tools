@@ -29,9 +29,17 @@ program
 chalk.enabled = program.color;
 
 // Carry over some stuff to environment
-program.environment["AWS_REGION"] = config.aws.region;
-program.environment["AWS_STAGE"] = config.aws.stage;
-program.environment["AWS_PROJECT_NAME"] = config.project.name;
+if (config.aws.region) {
+    program.environment["AWS_REGION"] = config.aws.region;
+}
+
+if (config.aws.stage) {
+    program.environment["AWS_STAGE"] = config.aws.stage;
+}
+
+if (config.project.name) {
+    program.environment["AWS_PROJECT_NAME"] = config.project.name;
+}
 
 // Check if we were given a Lambda function. Steps for searching are:
 // 1. If provided string is a file in current directory, it'll be used
