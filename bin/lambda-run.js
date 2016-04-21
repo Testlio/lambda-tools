@@ -3,7 +3,7 @@
 const chalk = require('chalk');
 const Promise = require('bluebird');
 const http = Promise.promisifyAll(require('http'));
-const fs = require('fs');
+const fs = require('graceful-fs');
 const path = require('path');
 const program = require('commander');
 const swagger = require('swagger-parser');
@@ -48,9 +48,17 @@ if (!program.environment['BASE_URL']) {
     program.environment['BASE_URL'] = 'http://localhost:' + program.port;
 }
 
-program.environment["AWS_REGION"] = program.environment.region || 'us-east-1';
-program.environment["AWS_STAGE"] = program.environment.stage || 'dev';
-program.environment["AWS_PROJECT_NAME"] = config.project.name;
+if (config.aws.region && !program.environment["AWS_REGION"]) {
+    program.environment["AWS_REGION"] = config.aws.region;
+}
+
+if (config.aws.stage && !program.environment["AWS_REGION"]) {
+    program.environment["AWS_STAGE"] = config.aws.stage;
+}
+
+if (config.project.name && !program.environment["AWS_PROJECT_NAME"]) {
+    program.environment["AWS_PROJECT_NAME"] = config.project.name;
+}
 
 function * genericErrorHandler(next) {
     // Generic error handler
