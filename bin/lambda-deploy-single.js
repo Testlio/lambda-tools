@@ -33,8 +33,30 @@ program
     .option('--exclude <list>', 'Packages to exclude from bundling', function(value) { return value.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .option('--clean', 'Force a clean build where cached bundles are not used')
-    .option('--no-color', 'Turn off ANSI coloring in output')
-    .parse(process.argv);
+    .option('--no-color', 'Turn off ANSI coloring in output');
+
+program.on('--help', function() {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log('    Deploy function \'hello-world\' from default file (index.js)');
+    console.log('    $ lambda deploy-single -n hello-world');
+    console.log();
+    console.log('    Deploy function \'foo\' with a handler from file \'./diverted.js\'');
+    console.log('    $ lambda deploy-single -n foo -f ./diverted.js');
+    console.log();
+    console.log('    Deploy function \'foo\', also publishing a version');
+    console.log('    $ lambda deploy-single -n foo --publish');
+    console.log();
+    console.log('    Deploy function \'foo\', excluding \'example\' package from bundle (included in ZIP separately)');
+    console.log('    $ lambda deploy-single -n foo --exclude example');
+    console.log();
+    console.log('    Deploy function \'foo\', with NODE_ENV and FOO set and disabling minification');
+    console.log('    $ lambda deploy-single -n foo -e NODE_ENV=production,FOO=bar --optimization 0');
+    console.log();
+});
+
+program.parse(process.argv);
 
 //
 // Configure program
