@@ -31,7 +31,7 @@ program
     .option('-r, --region <region>', 'Region')
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
-    .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
+    .option('--exclude [list]', 'Packages to exclude from bundling', function(val) { return val.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .option('--clean', 'Force a clean build where cached bundles are not used')
     .option('--no-color', 'Turn off ANSI coloring in output');

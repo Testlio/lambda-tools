@@ -30,7 +30,7 @@ program
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
     .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment, {})
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
-    .option('--exclude <list>', 'Packages to exclude from bundling', function(value) { return value.split(','); })
+    .option('--exclude [list]', 'Packages to exclude from bundling', function(value) { return value.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .option('--clean', 'Force a clean build where cached bundles are not used')
     .option('--no-color', 'Turn off ANSI coloring in output');
