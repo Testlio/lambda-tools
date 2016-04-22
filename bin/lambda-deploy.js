@@ -37,6 +37,7 @@ program
     .option('--no-color', 'Turn off ANSI coloring in output');
 
 program.on('--help', function() {
+    console.log();
     console.log('  Examples:');
     console.log();
     console.log('    Generate deployment files (in staging directory), but don\'t actually deploy');
