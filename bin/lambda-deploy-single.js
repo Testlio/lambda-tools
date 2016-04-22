@@ -24,7 +24,7 @@ const updateLambdas = require('../lib/deploy/update-lambdas-step');
 
 program
     .description('Deploy code to a single Lambda function')
-    .option('-n, --function-name <name>', 'Function name')
+    .usage('[options] <function-name>')
     .option('-f, --file <file>', 'Lambda file location', './index.js')
     .option('-r, --region <region>', 'AWS region to work in')
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
@@ -40,19 +40,19 @@ program.on('--help', function() {
     console.log('  Examples:');
     console.log();
     console.log('    Deploy function \'hello-world\' from default file (index.js)');
-    console.log('    $ lambda deploy-single -n hello-world');
+    console.log('    $ lambda deploy-single hello-world');
     console.log();
     console.log('    Deploy function \'foo\' with a handler from file \'./diverted.js\'');
-    console.log('    $ lambda deploy-single -n foo -f ./diverted.js');
+    console.log('    $ lambda deploy-single foo -f ./diverted.js');
     console.log();
     console.log('    Deploy function \'foo\', also publishing a version');
-    console.log('    $ lambda deploy-single -n foo --publish');
+    console.log('    $ lambda deploy-single foo --publish');
     console.log();
     console.log('    Deploy function \'foo\', excluding \'example\' package from bundle (included in ZIP separately)');
-    console.log('    $ lambda deploy-single -n foo --exclude example');
+    console.log('    $ lambda deploy-single foo --exclude example');
     console.log();
     console.log('    Deploy function \'foo\', with NODE_ENV and FOO set and disabling minification');
-    console.log('    $ lambda deploy-single -n foo -e NODE_ENV=production,FOO=bar --optimization 0');
+    console.log('    $ lambda deploy-single foo -e NODE_ENV=production,FOO=bar --optimization 0');
     console.log();
 });
 
@@ -66,6 +66,7 @@ program.parse(process.argv);
 chalk.enabled = program.color;
 
 // Determine function name
+program.functionName = program.args[0];
 program.functionName = program.functionName || prompt.question('Please enter the name of the function you are deploying: ');
 
 // Make region global for AWS
