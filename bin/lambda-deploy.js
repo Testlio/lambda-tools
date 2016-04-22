@@ -42,7 +42,7 @@ program.on('--help', function() {
     console.log('    Generate deployment files (in staging directory), but don\'t actually deploy');
     console.log('    $ lambda deploy --dry-run');
     console.log();
-    console.log('    Deploy to \'prod\' stage with NODE_ENV set to \'production\' and FOO set to \'bar\'')
+    console.log('    Deploy to \'prod\' stage with NODE_ENV set to \'production\' and FOO set to \'bar\'');
     console.log('    $ lambda deploy -s prod -e NODE_ENV=production,FOO=bar');
     console.log();
     console.log('    Deploy to default (dev) stage excluding \'example\' package from the bundle (included in the ZIP separately)');
