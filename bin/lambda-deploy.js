@@ -31,11 +31,30 @@ program
     .option('-r, --region <region>', 'Region')
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
-    .option('--exclude <list>', 'Packages to exclude from bundling', function(val) { return val.split(','); })
+    .option('--exclude [list]', 'Packages to exclude from bundling', function(val) { return val.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .option('--clean', 'Force a clean build where cached bundles are not used')
-    .option('--no-color', 'Turn off ANSI coloring in output')
-    .parse(process.argv);
+    .option('--no-color', 'Turn off ANSI coloring in output');
+
+program.on('--help', function() {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log('    Generate deployment files (in staging directory), but don\'t actually deploy');
+    console.log('    $ lambda deploy --dry-run');
+    console.log();
+    console.log('    Deploy to \'prod\' stage with NODE_ENV set to \'production\' and FOO set to \'bar\'');
+    console.log('    $ lambda deploy -s prod -e NODE_ENV=production,FOO=bar');
+    console.log();
+    console.log('    Deploy to default (dev) stage excluding \'example\' package from the bundle (included in the ZIP separately)');
+    console.log('    $ lambda deploy --exclude example');
+    console.log();
+    console.log('    Deploy to default stage, ignoring cached bundles and disabling minification');
+    console.log('    $ lambda deploy --clean --optimization 0');
+    console.log();
+});
+
+program.parse(process.argv);
 
 //
 // Configure program
