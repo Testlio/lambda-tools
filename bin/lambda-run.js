@@ -71,7 +71,7 @@ if (config.aws.region && !program.environment["AWS_REGION"]) {
     program.environment["AWS_REGION"] = config.aws.region;
 }
 
-if (config.aws.stage && !program.environment["AWS_REGION"]) {
+if (config.aws.stage && !program.environment["AWS_STAGE"]) {
     program.environment["AWS_STAGE"] = config.aws.stage;
 }
 
