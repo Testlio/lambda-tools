@@ -22,8 +22,30 @@ program
     .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', parsePath, 'event.json')
     .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
-    .option('--no-color', 'Turn off ANSI coloring in output')
-    .parse(process.argv);
+    .option('--no-color', 'Turn off ANSI coloring in output');
+
+program.on('--help', function() {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log('    Execute function from file index.js with the default event');
+    console.log('    $ lambda execute ./index.js');
+    console.log();
+    console.log('    Exceute function named \'foo\' from current service');
+    console.log('    $ lambda execute foo');
+    console.log();
+    console.log('    Execute function \'foo\' from current service with specific event file');
+    console.log('    $ lambda execute foo -e ../event.json');
+    console.log();
+    console.log('    Execute function from index.js with environment variables NODE_ENV and FOO set');
+    console.log('    $ lambda execute index.js --env NODE_ENV=test,FOO=bar');
+    console.log();
+    console.log('    Execute function \'foo\' with a custom timeout of 60s');
+    console.log('    $ lambda execute foo -t 60');
+    console.log();
+});
+
+program.parse(process.argv);
 
 // Enable/Disable colors
 chalk.enabled = program.color;
@@ -33,7 +55,7 @@ if (config.aws.region && !program.environment["AWS_REGION"]) {
     program.environment["AWS_REGION"] = config.aws.region;
 }
 
-if (config.aws.stage && !program.environment["AWS_REGION"]) {
+if (config.aws.stage && !program.environment["AWS_STAGE"]) {
     program.environment["AWS_STAGE"] = config.aws.stage;
 }
 

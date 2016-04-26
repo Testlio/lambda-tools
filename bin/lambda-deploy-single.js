@@ -24,17 +24,39 @@ const updateLambdas = require('../lib/deploy/update-lambdas-step');
 
 program
     .description('Deploy code to a single Lambda function')
-    .option('-n, --function-name <name>', 'Function name')
+    .usage('[options] <function-name>')
     .option('-f, --file <file>', 'Lambda file location', './index.js')
     .option('-r, --region <region>', 'AWS region to work in')
     .option('-p, --publish', 'If set publishes a new version of the Lambda function')
     .option('-e, --environment <env>', 'Environment variables to make available in the Lambda function', parseEnvironment, {})
     .option('--dry-run', 'Simply packs the Lambda function into a minified zip')
-    .option('--exclude <list>', 'Packages to exclude from bundling', function(value) { return value.split(','); })
+    .option('--exclude [list]', 'Packages to exclude from bundling', function(value) { return value.split(','); })
     .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .option('--clean', 'Force a clean build where cached bundles are not used')
-    .option('--no-color', 'Turn off ANSI coloring in output')
-    .parse(process.argv);
+    .option('--no-color', 'Turn off ANSI coloring in output');
+
+program.on('--help', function() {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log('    Deploy function \'hello-world\' from default file (index.js)');
+    console.log('    $ lambda deploy-single hello-world');
+    console.log();
+    console.log('    Deploy function \'foo\' with a handler from file \'./diverted.js\'');
+    console.log('    $ lambda deploy-single foo -f ./diverted.js');
+    console.log();
+    console.log('    Deploy function \'foo\', also publishing a version');
+    console.log('    $ lambda deploy-single foo --publish');
+    console.log();
+    console.log('    Deploy function \'foo\', excluding \'example\' package from bundle (included in ZIP separately)');
+    console.log('    $ lambda deploy-single foo --exclude example');
+    console.log();
+    console.log('    Deploy function \'foo\', with NODE_ENV and FOO set and disabling minification');
+    console.log('    $ lambda deploy-single foo -e NODE_ENV=production,FOO=bar --optimization 0');
+    console.log();
+});
+
+program.parse(process.argv);
 
 //
 // Configure program
@@ -44,6 +66,7 @@ program
 chalk.enabled = program.color;
 
 // Determine function name
+program.functionName = program.args[0];
 program.functionName = program.functionName || prompt.question('Please enter the name of the function you are deploying: ');
 
 // Make region global for AWS

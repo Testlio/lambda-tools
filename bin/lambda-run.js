@@ -30,8 +30,27 @@ program
     .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', parsePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--mirror-environment', 'Mirror the environment visible to lambda-tools in the lambda functions')
-    .option('--no-color', 'Turn off ANSI coloring in output')
-    .parse(process.argv);
+    .option('--no-color', 'Turn off ANSI coloring in output');
+
+program.on('--help', function() {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log('    Run service from api.json on port 3000 with no environment variables specified');
+    console.log('    $ lambda run');
+    console.log();
+    console.log('    Run service on port 80');
+    console.log('    $ lambda run -p 80');
+    console.log();
+    console.log('    Run service from specific Swagger file and with environment variables NODE_ENV and FOO set');
+    console.log('    $ lambda run -a different_api.json -e NODE_ENV=test,FOO=bar');
+    console.log();
+    console.log('    Run service mirroring current process\' environment variables to Lambda functions');
+    console.log('    $ lambda run --mirror-environment');
+    console.log();
+});
+
+program.parse(process.argv);
 
 // Enable/Disable colors
 chalk.enabled = program.color;
@@ -52,7 +71,7 @@ if (config.aws.region && !program.environment["AWS_REGION"]) {
     program.environment["AWS_REGION"] = config.aws.region;
 }
 
-if (config.aws.stage && !program.environment["AWS_REGION"]) {
+if (config.aws.stage && !program.environment["AWS_STAGE"]) {
     program.environment["AWS_STAGE"] = config.aws.stage;
 }
 
