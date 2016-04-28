@@ -23,6 +23,9 @@ All scripts may make use of a `.lambda-tools-rc.json` file in the root of the pr
     "project": {
         "name": "Project Name"
     },
+    "lambda": {
+        "runtime": "nodejs4.3"
+    },
     "aws": {
         "region": "us-east-1",
         "stage": "dev"
