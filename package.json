@@ -1,6 +1,6 @@
 {
   "name": "lambda-tools",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
   "scripts": {
