@@ -2,7 +2,7 @@
 
 # Lambda Tools
 
-[![Circle CI](https://circleci.com/gh/Testlio/lambda-tools.svg?style=shield&circle-token=dc3e9529742ff948e2dd4ef4fa9c07d2622e5a21)](https://circleci.com/gh/Testlio/lambda-tools) [![NPM](https://img.shields.io/npm/v/lambda-tools.svg?maxAge=2592000)](https://npmjs.org/package/lambda-tools) [![NPM downloads](https://img.shields.io/npm/dm/lambda-tools.svg)](https://npmjs.org/package/lambda-tools)
+[![Circle CI](https://circleci.com/gh/Testlio/lambda-tools.svg?style=shield&circle-token=dc3e9529742ff948e2dd4ef4fa9c07d2622e5a21)](https://circleci.com/gh/Testlio/lambda-tools) [![NPM](https://img.shields.io/npm/v/lambda-tools.svg?maxAge=3600)](https://npmjs.org/package/lambda-tools) [![NPM downloads](https://img.shields.io/npm/dm/lambda-tools.svg)](https://npmjs.org/package/lambda-tools)
 
 This repository contains a set of scripts that are useful when developing [AWS Lambda](https://aws.amazon.com/lambda/) backed microservices that rely on [AWS CloudFormation](https://aws.amazon.com/cloudformation/) and [AWS API Gateway](https://aws.amazon.com/api-gateway/).
 
@@ -22,6 +22,9 @@ All scripts may make use of a `.lambda-tools-rc.json` file in the root of the pr
 {
     "project": {
         "name": "Project Name"
+    },
+    "lambda": {
+        "runtime": "nodejs4.3"
     },
     "aws": {
         "region": "us-east-1",

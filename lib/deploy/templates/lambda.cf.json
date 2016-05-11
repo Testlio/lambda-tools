@@ -10,7 +10,7 @@
         },
         "Handler": "index.handler",
         "MemorySize": 256,
-        "Role": {"Fn::GetAtt": ["IamRoleLambda", "Arn"] },
+        "Role": { "Fn::GetAtt": ["IamRoleLambda", "Arn"] },
         "Runtime": "nodejs",
         "Timeout": 6
     }

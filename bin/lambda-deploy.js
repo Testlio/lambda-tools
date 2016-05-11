@@ -32,7 +32,6 @@ program
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--exclude [list]', 'Packages to exclude from bundling', function(val) { return val.split(','); })
-    .option('-o, --optimization <level>', 'Optimization level to use, valid values are 0-1', parseInt, 1)
     .option('--clean', 'Force a clean build where cached bundles are not used')
     .option('--no-color', 'Turn off ANSI coloring in output');
 
@@ -49,8 +48,8 @@ program.on('--help', function() {
     console.log('    Deploy to default (dev) stage excluding \'example\' package from the bundle (included in the ZIP separately)');
     console.log('    $ lambda deploy --exclude example');
     console.log();
-    console.log('    Deploy to default stage, ignoring cached bundles and disabling minification');
-    console.log('    $ lambda deploy --clean --optimization 0');
+    console.log('    Deploy to default stage, ignoring cached bundles');
+    console.log('    $ lambda deploy --clean');
     console.log();
 });
 
@@ -92,7 +91,7 @@ const context = {
         timestamp: Math.floor(Date.now() / 1000)
     },
 
-    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'optimization', 'exclude', 'clean']),
+    program: _.pick(program, ['environment', 'stage', 'region', 'lambda', 'exclude', 'clean']),
     logger: logger
 };
 
