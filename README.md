@@ -78,9 +78,10 @@ The actions the user executing the scripts should be able to perform are:
     7. `lambda:GetAlias`
     8. `lambda:UpdateAlias`
     9. `lambda:CreateAlias`
+    10. `s3:ListBucket`
+    11. `s3:CreateBucket`
 2. `deploy`
-    1. `s3:CreateBucket`
-    2. `s3:PutObject`
+    1. `s3:PutObject` - Can be limited to specific bucket (`lambda-tools-<major-version>-assets-<region>`)
     3. `cloudformation:DescribeStacks`
     4. `cloudformation:UpdateStack`
     5. `cloudformation:CreateStack`
@@ -96,7 +97,7 @@ The actions the user executing the scripts should be able to perform are:
 
 ### Setup
 
-This step should only ever be run once for AWS account and region combination. The step will create the necessary Lambda function that acts as the CloudFormation resource for all stacks created by lambda-tools. If no region is defined, `us-east-1` is assumed. **If this step is not done, services with an `api.json` file will fail to deploy.**
+This step should only ever be run once for AWS account, region and LT version combination. The step will create the necessary Lambda functions that act as the CloudFormation resources for all stacks created by lambda-tools. If no region is defined, `us-east-1` is assumed. This also creates the staging S3 bucket that is used to store all stack assets. **If this step is not done, all deployments will fail**.
 
 ```
 lambda setup [options]
