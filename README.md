@@ -122,10 +122,10 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 A single Lambda function can be deployed without using CloudFormation via `lambda deploy-single`. This simply updates the Lambda function code. **The script assumes that the Lambda function already exists.**
 
 ```
-lambda deploy-single -n function-name [options]
+lambda deploy-single function-name [options]
 ```
 
-Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3.
+Deploying a single Lambda function directly to AWS Lambda. Processes the Lambda function as described in `deploy`, thus reducing the size of the function. Doesn't upload the function to S3. Assumes the handler of the function is in `index.handler`, you can change the entrypoint file via the `-f` option.
 
 ### Caching
 
