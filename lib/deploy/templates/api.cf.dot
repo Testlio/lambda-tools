@@ -28,7 +28,7 @@
         "StageName": "{{=it.stageName}}",
         "Variables": {
             {{~it.variables :value:idx}}
-            "{{=value.key}}": {
+            "{{=value.key}}": {{? value.value }}{
                 "Fn::Join": [
                     "/",
                     [
@@ -59,7 +59,7 @@
                         {{?}}
                     ]
                 ]
-            }{{? idx < it.variables.length - 1}},{{?}}
+            }{{??}}null{{?}}{{? idx < it.variables.length - 1}},{{?}}
             {{~}}
         }
     }
