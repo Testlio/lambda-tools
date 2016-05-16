@@ -54,9 +54,7 @@ const context = {
 };
 
 // Use a series of promises to populate the context
-new Promise(function(resolve) {
-    resolve(context);
-})
+Promise.resolve(context)
 .then(function(ctx) {
     // Next up, determine if there are Lambdas, and if so, read them into the ctx
     return new Promise(function(resolve) {
