@@ -94,6 +94,8 @@ The actions the user executing the scripts should be able to perform are:
     1. N/A
 4. `execute`
     1. N/A
+5. `describe`
+    1. N/A
 
 ### Setup
 
@@ -102,6 +104,20 @@ This step should only ever be run once for AWS account, region and LT version co
 ```
 lambda setup [options]
 ```
+
+## Describe
+
+Print out an overview of the service in the current working directory. This helps understand which Lambda functions are connected to what CloudFormation resources.
+
+```
+lambda describe [options]
+```
+
+The output contains some metadata about the service, followed by a tree representing all Lambda functions and their respective triggers. This script goes over the CloudFormation template and looks at resources that are capable of triggering a Lambda function. In addition, it also looks at `api.json` to understand which Lambda functions are tied to the public API.
+
+The description also includes Lambda functions that were found in the `lambdas` directory, but did not come up as being related to anything, this allows locating potentially unused functions.
+
+It is worth noting that the Lambda functions are represented by their name (i.e the name of the directory they reside in) and as such, that name can also be directly used with `lambda execute`.
 
 ## Deployment
 
