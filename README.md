@@ -113,9 +113,9 @@ Print out an overview of the service in the current working directory. This help
 lambda describe [options]
 ```
 
-The output contains some metadata about the service, followed by a tree representing all Lambda functions and their respective triggers. This script goes over the CloudFormation template and looks at resources that are capable of triggering a Lambda function. In addition, it also looks at a `api.json` to understand which Lambda functions are tied to the public API.
+The output contains some metadata about the service, followed by a tree representing all Lambda functions and their respective triggers. This script goes over the CloudFormation template and looks at resources that are capable of triggering a Lambda function. In addition, it also looks at `api.json` to understand which Lambda functions are tied to the public API.
 
-The description also includes Lambda functions that were found in the `lambdas` directory, but did not come up as being related to anything, this allows location potentially unused functions.
+The description also includes Lambda functions that were found in the `lambdas` directory, but did not come up as being related to anything, this allows locating potentially unused functions.
 
 It is worth noting that the Lambda functions are represented by their name (i.e the name of the directory they reside in) and as such, that name can also be directly used with `lambda execute`.
 
