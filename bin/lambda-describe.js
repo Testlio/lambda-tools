@@ -65,8 +65,8 @@ new Promise(function(resolve) {
 
             // Grab information about all of the Lambdas (including their
             // CamelCased names)
-            fs.readdir(lambdasPath, function(err, results) {
-                if (err) return resolve(ctx);
+            fs.readdir(lambdasPath, function(error, results) {
+                if (error) return resolve(ctx);
 
                 const lambdas = _.compact(results.map(function(lambdaPath) {
                     const fullPath = path.join(lambdasPath, lambdaPath);
@@ -87,7 +87,7 @@ new Promise(function(resolve) {
                     return lambda;
                 }));
 
-                ctx.lambdas = lambdas
+                ctx.lambdas = lambdas;
                 resolve(ctx);
             });
         });
@@ -134,8 +134,8 @@ new Promise(function(resolve) {
         fs.stat(templatePath, function(err, stats) {
             if (err || !stats.isFile()) return resolve(ctx);
 
-            fs.readFile(templatePath, function(err, data) {
-                if (err) return resolve(ctx);
+            fs.readFile(templatePath, function(error, data) {
+                if (error) return resolve(ctx);
 
                 ctx.template = JSON.parse(data);
                 resolve(ctx);
@@ -150,7 +150,7 @@ new Promise(function(resolve) {
         nodes: []
     };
 
-    let foundLambdas = [];
+    const foundLambdas = [];
 
     //
     // First up, the public API on API Gateway
@@ -245,7 +245,7 @@ new Promise(function(resolve) {
         return {
             label: key,
             nodes: lambdas
-        }
+        };
     }));
 
     results.nodes.push({
