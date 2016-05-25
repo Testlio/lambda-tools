@@ -3,7 +3,16 @@
 "use strict";
 
 const program = require('commander');
-const packageVersion = require('../package.json').version;
+const pkg = require('../package.json');
+const packageVersion = pkg.version;
+
+const updater = require('update-notifier');
+
+// Check for updates and notify
+updater({
+    pkg: pkg,
+    updateCheckInterval: 21600000 // 6h
+}).notify();
 
 program
   .version(packageVersion)
