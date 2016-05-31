@@ -125,7 +125,7 @@ if (fsx.fileExists(eventPath)) {
 }
 
 const context = {
-    functionName: path.basename(program.file),
+    functionName: path.basename(path.dirname(program.file)),
     invokedFunctionArn: '$LATEST',
     memoryLimitInMB: '1024',
     timeout: program.timeout
