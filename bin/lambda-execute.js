@@ -124,10 +124,8 @@ if (fsx.fileExists(eventPath)) {
     }
 }
 
+// We know the requested timeout, send that along to execution
 const context = {
-    functionName: path.basename(program.file),
-    invokedFunctionArn: '$LATEST',
-    memoryLimitInMB: '1024',
     timeout: program.timeout
 };
 
