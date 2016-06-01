@@ -14,6 +14,8 @@ updater({
     updateCheckInterval: 21600000 // 6h
 }).notify();
 
+console.log('Pre-release');
+
 program
   .version(packageVersion)
   .command('setup', 'setup lambda-tools on AWS')
