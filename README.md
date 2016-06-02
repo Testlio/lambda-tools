@@ -134,9 +134,69 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 3. Uploads Lambda function code, API definition (if any) and the compiled CloudFormation template to S3
 4. Creates/Updates the CF stack using the template and assets in S3
 
+### Lambda Configuration
+
+Altering the configuration of Lambda functions that are deployed via CloudFormation can be done by creating a `cf.json` file inside of a Lambda function directory (i.e `lambdas/<name>`). This file can have the following structure:
+
+```json
+{
+    "Properties": {
+        // CloudFormation AWS::Lambda::Function Properties
+    },
+    "Assets": {
+        // Any static assets that should be made available to the Lambda function
+    }
+}
+```
+
+For example, the following `cf.json` file sets the Lambda execution timeout to 30 seconds:
+
+```json
+{
+    "Properties": {
+        "Timeout": 30
+    }
+}
+```
+
+### Static Assets
+
+The same `cf.json` file also handles static assets - files that are included in the bundled Lambda function as separate files. Generally, these may include templates and other files that the Lambda function would like to access on disk without bundling them directly into the source code.
+
+These static assets are defined under the `Assets` key (notice the capitalization) as a key-value mapping, where keys are the expected paths in the bundle and the values are relative paths to the source file that should be included.
+
+For example, a Lambda function with the following structure:
+
+```
+.
+├── index.js
+├── templates
+│   └── response.txt
+└── cf.json
+```
+
+May declare an `Assets` value as such:
+
+```json
+{
+    "Assets": {
+        "response_template.txt": "./templates/response.txt"
+    }
+}
+```
+
+Notice that the path in the bundle is flattened and no longer includes the subdirectory `templates`. In the Lambda function, the file can then be accessed as:
+
+```js
+const fs = require('fs');
+console.log(fs.readFileSync('./response_template.txt', 'utf8')); // Prints out template
+```
+
+_It is important to emphasize, the source location of the mapped asset can also point to another directory - this allows reusing assets between Lambda functions, while also allowing these assets to have different names in specific Lambda functions._
+
 ### Single Lambda
 
-A single Lambda function can be deployed without using CloudFormation via `lambda deploy-single`. This simply updates the Lambda function code. **The script assumes that the Lambda function already exists.**
+A single Lambda function can be deployed without using CloudFormation via `lambda deploy-single`. This simply updates the Lambda function code. **The script assumes that the Lambda function already exists and its configuration is suitable. This deployment script does not update the Lambda function configuration nor does it support static assets.**
 
 ```
 lambda deploy-single function-name [options]
@@ -178,3 +238,9 @@ lambda run [options]
 Running a service locally. This should be used strictly for development purposes as the code that simulates AWS is imperfect (at best) and is not guaranteed to respond similarly to the actual Lambda environment. It does however do its best to allow locally debugging lambda functions sitting behind an API gateway.
 
 The command starts a local server, which parses the API spec (defaults to `./api.json`) and creates appropriate routes, all invalid routes return `404`. The server also mimics AWS's logic in creating the integration (i.e it maps the incoming HTTP request into an AWS Lambda integration), as well as mapping the result of the Lambda function into an appropriate HTTP response.
+
+### Note about execution
+
+Both `lambda run` as well as `lambda execute` handle execution in a separate process, meaning the executing Lambda does not affect the main `lambda` script. Furthermore, both of the scripts also clean up after the Lambda function executes, i.e the file directory state is captured before and after, and all new files/folders are removed once execution finishes.
+
+Lambda functions that are part of a service and have static assets defined in `cf.json` also expose those files as symlinks during execution via `execute` or `run`. These symlinks are also cleaned up once execution finishes.
