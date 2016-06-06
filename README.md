@@ -196,7 +196,7 @@ _It is important to emphasize, the source location of the mapped asset can also 
 
 ### Source Maps
 
-During deployment source maps for the transpiled/bundled code are generated and uploaded along with all other assets to S3. These will have the same name as the ZIP of the bundled code, followed by a `.map` suffix. In addition, the local staging directory will also include a source map for the non-transpiled version of the code (along with the original non-transpiled bundle code).
+During deployment source maps for the transpiled/bundled code are generated and uploaded along with all other assets to S3. These will have the same name as the ZIP of the bundled code, but with a `.js.map` extension. In addition, the local staging directory will also include a source map for the non-transpiled version of the code (along with the original non-transpiled bundle code).
 
 ### Single Lambda
 
