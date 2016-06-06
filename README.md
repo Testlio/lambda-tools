@@ -194,6 +194,10 @@ console.log(fs.readFileSync('./response_template.txt', 'utf8')); // Prints out t
 
 _It is important to emphasize, the source location of the mapped asset can also point to another directory - this allows reusing assets between Lambda functions, while also allowing these assets to have different names in specific Lambda functions._
 
+### Source Maps
+
+During deployment source maps for the transpiled/bundled code are generated and uploaded along with all other assets to S3. These will have the same name as the ZIP of the bundled code, followed by a `.map` suffix. In addition, the local staging directory will also include a source map for the non-transpiled version of the code (along with the original non-transpiled bundle code).
+
 ### Single Lambda
 
 A single Lambda function can be deployed without using CloudFormation via `lambda deploy-single`. This simply updates the Lambda function code. **The script assumes that the Lambda function already exists and its configuration is suitable. This deployment script does not update the Lambda function configuration nor does it support static assets.**
