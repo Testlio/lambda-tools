@@ -115,104 +115,6 @@
                     }
                 ]
             }
-        },
-        "IamRoleApiGateway": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-                "AssumeRolePolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Principal": {
-                                "Service": [
-                                    "apigateway.amazonaws.com"
-                                ]
-                            },
-                            "Action": [
-                                "sts:AssumeRole"
-                            ]
-                        }
-                    ]
-                },
-                "Path": "/"
-            }
-        },
-        "IamInstanceProfileApiGateway": {
-            "Type": "AWS::IAM::InstanceProfile",
-            "DependsOn": [
-                "IamRoleApiGateway"
-            ],
-            "Properties": {
-                "Path": "/",
-                "Roles": [
-                    {
-                        "Ref": "IamRoleApiGateway"
-                    }
-                ]
-            }
-        },
-        "IamGroupApiGateway": {
-            "Type": "AWS::IAM::Group",
-            "Properties": {
-                "Path": "/"
-            }
-        },
-        "IamPolicyApiGateway": {
-            "Type": "AWS::IAM::Policy",
-            "DependsOn": [
-                "IamRoleApiGateway",
-                "IamGroupApiGateway"
-            ],
-            "Properties": {
-                "PolicyName": {
-                    "Fn::Join": [
-                        "_-_",
-                        [
-                            {
-                                "Ref": "aaStage"
-                            },
-                            {
-                                "Ref": "aaProjectName"
-                            },
-                            "api-gateway"
-                        ]
-                    ]
-                },
-                "PolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                        {
-                            "Effect": "Allow",
-                            "Action": [
-                                "lambda:InvokeFunction"
-                            ],
-                            "Resource": {
-                                "Fn::Join": [
-                                    ":",
-                                    [
-                                        "arn:aws:lambda",
-                                        {
-                                            "Ref": "AWS::Region"
-                                        },
-                                        "*:*"
-                                    ]
-                                ]
-                            }
-                        }
-                    ]
-                },
-                "Roles": [
-                    {
-                        "Ref": "IamRoleApiGateway"
-                    }
-                ],
-                "Groups": [
-                    {
-                        "Ref": "IamGroupApiGateway"
-                    }
-                ]
-            }
         }
     },
     "Outputs": {
@@ -221,15 +123,6 @@
             "Value": {
                 "Fn::GetAtt": [
                     "IamRoleLambda",
-                    "Arn"
-                ]
-            }
-        },
-        "IamRoleArnApiGateway": {
-            "Description": "ARN of the api gateway IAM role",
-            "Value": {
-                "Fn::GetAtt": [
-                    "IamRoleApiGateway",
                     "Arn"
                 ]
             }

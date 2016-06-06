@@ -5,7 +5,7 @@ const chalk = require('chalk');
 const logger = require('../lib/helpers/logger').shared;
 
 // Setup is currently a single step process
-const createAPIGateway = require('../lib/setup/create-api-gateway-lambda.js');
+const createResources = require('../lib/setup/create-cf-resources.js');
 
 //
 //  Program specification
@@ -19,5 +19,5 @@ program
 chalk.enabled = program.color;
 
 logger.task(`Setting up ${chalk.underline('lambda-tools')}`, function(resolve, reject) {
-    createAPIGateway(program.region).then(resolve, reject);
+    createResources(program.region).then(resolve, reject);
 });

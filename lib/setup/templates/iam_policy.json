@@ -20,10 +20,22 @@
         {
             "Effect": "Allow",
             "Action": [
+                "lambda:GetFunctionConfiguration",
+                "lambda:ListVersionsByFunction",
+                "lambda:PublishVersion"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
                 "s3:GetObject",
                 "s3:HeadObject"
             ],
-            "Resource": "*"
+            "Resource": [
+                "arn:aws:s3:::{{=it.s3Bucket}}",
+                "arn:aws:s3:::{{=it.s3Bucket}}/*"
+            ]
         },
         {
             "Effect": "Allow",

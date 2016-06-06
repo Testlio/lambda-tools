@@ -20,10 +20,7 @@
                 "2015-03-31",
                 "functions",
                 {
-                    "Fn::GetAtt": [
-                        "{{=it.name}}",
-                        "Arn"
-                    ]
+                    "Ref": "{{=it.name}}"
                 },
                 "invocations"
             ]

@@ -78,9 +78,10 @@ The actions the user executing the scripts should be able to perform are:
     7. `lambda:GetAlias`
     8. `lambda:UpdateAlias`
     9. `lambda:CreateAlias`
+    10. `s3:ListBucket`
+    11. `s3:CreateBucket`
 2. `deploy`
-    1. `s3:CreateBucket`
-    2. `s3:PutObject`
+    1. `s3:PutObject` - Can be limited to specific bucket (`lambda-tools-<major-version>-assets-<region>`)
     3. `cloudformation:DescribeStacks`
     4. `cloudformation:UpdateStack`
     5. `cloudformation:CreateStack`
@@ -93,14 +94,30 @@ The actions the user executing the scripts should be able to perform are:
     1. N/A
 4. `execute`
     1. N/A
+5. `describe`
+    1. N/A
 
 ### Setup
 
-This step should only ever be run once for AWS account and region combination. The step will create the necessary Lambda function that acts as the CloudFormation resource for all stacks created by lambda-tools. If no region is defined, `us-east-1` is assumed. **If this step is not done, services with an `api.json` file will fail to deploy.**
+This step should only ever be run once for AWS account, region and LT version combination. The step will create the necessary Lambda functions that act as the CloudFormation resources for all stacks created by lambda-tools. If no region is defined, `us-east-1` is assumed. This also creates the staging S3 bucket that is used to store all stack assets. **If this step is not done, all deployments will fail**.
 
 ```
 lambda setup [options]
 ```
+
+## Describe
+
+Print out an overview of the service in the current working directory. This helps understand which Lambda functions are connected to what CloudFormation resources.
+
+```
+lambda describe [options]
+```
+
+The output contains some metadata about the service, followed by a tree representing all Lambda functions and their respective triggers. This script goes over the CloudFormation template and looks at resources that are capable of triggering a Lambda function. In addition, it also looks at `api.json` to understand which Lambda functions are tied to the public API.
+
+The description also includes Lambda functions that were found in the `lambdas` directory, but did not come up as being related to anything, this allows locating potentially unused functions.
+
+It is worth noting that the Lambda functions are represented by their name (i.e the name of the directory they reside in) and as such, that name can also be directly used with `lambda execute`.
 
 ## Deployment
 
@@ -117,9 +134,73 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 3. Uploads Lambda function code, API definition (if any) and the compiled CloudFormation template to S3
 4. Creates/Updates the CF stack using the template and assets in S3
 
+### Lambda Configuration
+
+Altering the configuration of Lambda functions that are deployed via CloudFormation can be done by creating a `cf.json` file inside of a Lambda function directory (i.e `lambdas/<name>`). This file can have the following structure:
+
+```json
+{
+    "Properties": {
+        // CloudFormation AWS::Lambda::Function Properties
+    },
+    "Assets": {
+        // Any static assets that should be made available to the Lambda function
+    }
+}
+```
+
+For example, the following `cf.json` file sets the Lambda execution timeout to 30 seconds:
+
+```json
+{
+    "Properties": {
+        "Timeout": 30
+    }
+}
+```
+
+### Static Assets
+
+The same `cf.json` file also handles static assets - files that are included in the bundled Lambda function as separate files. Generally, these may include templates and other files that the Lambda function would like to access on disk without bundling them directly into the source code.
+
+These static assets are defined under the `Assets` key (notice the capitalization) as a key-value mapping, where keys are the expected paths in the bundle and the values are relative paths to the source file that should be included.
+
+For example, a Lambda function with the following structure:
+
+```
+.
+├── index.js
+├── templates
+│   └── response.txt
+└── cf.json
+```
+
+May declare an `Assets` value as such:
+
+```json
+{
+    "Assets": {
+        "response_template.txt": "./templates/response.txt"
+    }
+}
+```
+
+Notice that the path in the bundle is flattened and no longer includes the subdirectory `templates`. In the Lambda function, the file can then be accessed as:
+
+```js
+const fs = require('fs');
+console.log(fs.readFileSync('./response_template.txt', 'utf8')); // Prints out template
+```
+
+_It is important to emphasize, the source location of the mapped asset can also point to another directory - this allows reusing assets between Lambda functions, while also allowing these assets to have different names in specific Lambda functions._
+
+### Source Maps
+
+During deployment source maps for the transpiled/bundled code are generated and uploaded along with all other assets to S3. These will have the same name as the ZIP of the bundled code, but with a `.js.map` extension. In addition, the local staging directory will also include a source map for the non-transpiled version of the code (along with the original non-transpiled bundle code).
+
 ### Single Lambda
 
-A single Lambda function can be deployed without using CloudFormation via `lambda deploy-single`. This simply updates the Lambda function code. **The script assumes that the Lambda function already exists.**
+A single Lambda function can be deployed without using CloudFormation via `lambda deploy-single`. This simply updates the Lambda function code. **The script assumes that the Lambda function already exists and its configuration is suitable. This deployment script does not update the Lambda function configuration nor does it support static assets.**
 
 ```
 lambda deploy-single function-name [options]
@@ -161,3 +242,9 @@ lambda run [options]
 Running a service locally. This should be used strictly for development purposes as the code that simulates AWS is imperfect (at best) and is not guaranteed to respond similarly to the actual Lambda environment. It does however do its best to allow locally debugging lambda functions sitting behind an API gateway.
 
 The command starts a local server, which parses the API spec (defaults to `./api.json`) and creates appropriate routes, all invalid routes return `404`. The server also mimics AWS's logic in creating the integration (i.e it maps the incoming HTTP request into an AWS Lambda integration), as well as mapping the result of the Lambda function into an appropriate HTTP response.
+
+### Note about execution
+
+Both `lambda run` as well as `lambda execute` handle execution in a separate process, meaning the executing Lambda does not affect the main `lambda` script. Furthermore, both of the scripts also clean up after the Lambda function executes, i.e the file directory state is captured before and after, and all new files/folders are removed once execution finishes.
+
+Lambda functions that are part of a service and have static assets defined in `cf.json` also expose those files as symlinks during execution via `execute` or `run`. These symlinks are also cleaned up once execution finishes.

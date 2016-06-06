@@ -1,0 +1,30 @@
+{
+    "Type": "Custom::LambdaVersion",
+    "DependsOn": [
+        "{{=it.lambda}}"
+    ],
+    "Properties": {
+        "ServiceToken": {
+            "Fn::Join": [
+                ":",
+                [
+                    "arn:aws:lambda",
+                    {
+                        "Ref": "AWS::Region"
+                    },
+                    {
+                        "Ref": "AWS::AccountId"
+                    },
+                    "function:{{=it.resource}}"
+                ]
+            ]
+        },
+        "Description": "{{=it.description}}",
+        "FunctionName": {
+            "Fn::GetAtt": [
+                "{{=it.lambda}}",
+                "Arn"
+            ]
+        }
+    }
+}

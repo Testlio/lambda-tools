@@ -1,0 +1,16 @@
+{
+    "Type": "AWS::Lambda::Permission",
+    "DependsOn": [
+        "{{=it.lambda}}"
+    ],
+    "Properties": {
+        "FunctionName" : {
+            "Fn::GetAtt" : [
+                "{{=it.lambda}}",
+                "Arn"
+            ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com"
+    }
+}

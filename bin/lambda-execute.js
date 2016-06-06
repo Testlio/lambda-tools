@@ -63,6 +63,9 @@ if (config.project.name && !program.environment["AWS_PROJECT_NAME"]) {
     program.environment["AWS_PROJECT_NAME"] = config.project.name;
 }
 
+// Keep track of any assets we want to expose to our Lambda function
+let assets = {};
+
 // Check if we were given a Lambda function. Steps for searching are:
 // 1. If provided string is a file in current directory, it'll be used
 // 2. If provided string matches a directory in CWD/lambdas/<string>, then that Lambda will be executed
@@ -89,6 +92,9 @@ if (program.args.length === 0) {
             if (fsx.fileExists(propertiesFile)) {
                 const handlerFile = fsx.readJSONFileSync(propertiesFile);
                 const handler = _.get(handlerFile, 'Properties.Handler', 'index.handler');
+                program.timeout = parseInt(_.get(handlerFile, 'Properties.Timeout', program.timeout), 10);
+
+                assets = _.get(handlerFile, 'Assets', {});
 
                 program.file = path.resolve(proposedDir, handler.split('.')[0] + '.js');
             } else {
@@ -124,10 +130,8 @@ if (fsx.fileExists(eventPath)) {
     }
 }
 
+// We know the requested timeout, send that along to execution
 const context = {
-    functionName: path.basename(program.file),
-    invokedFunctionArn: '$LATEST',
-    memoryLimitInMB: '1024',
     timeout: program.timeout
 };
 
@@ -137,7 +141,7 @@ logger.task(`Executing: ${chalk.underline(program.file)}`, function(resolve, rej
     logger.log(`${JSON.stringify(event, null, '\t').split('\n').join('\n\t')}`);
     logger.log(chalk.gray('--\n'));
 
-    const promise = Execution(program.file, event, context, program.environment).next().value;
+    const promise = Execution(program.file, event, context, program.environment, assets).next().value;
     promise.then(function(result) {
         logger.log(chalk.gray('--'));
         logger.log(`Result '${result}'\n`);
