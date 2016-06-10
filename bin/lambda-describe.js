@@ -185,7 +185,7 @@ Promise.resolve(context)
     if (securityDefinitions) {
         api.push({
             label: 'Authorizers',
-            nodes: _.map(securityDefinitions, function(value, key) {
+            nodes: _.compact(_.map(securityDefinitions, function(value, key) {
                 const definition = value['x-amazon-apigateway-authorizer'];
                 if (_.isUndefined(definition)) {
                     return;
@@ -208,7 +208,7 @@ Promise.resolve(context)
                         return path.basename(lambda.path);
                     })
                 };
-            })
+            }))
         });
     }
 
