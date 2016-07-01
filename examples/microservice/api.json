@@ -25,6 +25,11 @@
                         }
                     }
                 },
+                "parameters": [
+                    {
+                        "$ref": "#/parameters/AuthorizationHeader"
+                    }
+                ],
                 "x-amazon-apigateway-auth": {
                     "type": "none"
                 },
@@ -51,6 +56,15 @@
             }
         }
     },
+    "parameters": {
+        "AuthorizationHeader": {
+            "name": "Authorization",
+            "in": "header",
+            "description": "Authorization header",
+            "required": true,
+            "type": "string"
+        }
+    }
     "definitions": {
         "String": {
             "type": "string"
