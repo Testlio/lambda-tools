@@ -119,6 +119,12 @@ The description also includes Lambda functions that were found in the `lambdas` 
 
 It is worth noting that the Lambda functions are represented by their name (i.e the name of the directory they reside in) and as such, that name can also be directly used with `lambda execute`.
 
+### Options
+```
+-h, --help       output usage information
+-t, --tree-only  Only draw the Lambda usage tree, skipping metadata about the service
+```
+
 ## Deployment
 
 Deploying a service to AWS
@@ -133,6 +139,20 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 2. Completes the CloudFormation template in `cf.json`. This is used for raising/updating the stack on AWS
 3. Uploads Lambda function code, API definition (if any) and the compiled CloudFormation template to S3
 4. Creates/Updates the CF stack using the template and assets in S3
+
+### Options
+
+```
+-h, --help                 output usage information
+-n, --project-name <name>  Project name
+-s, --stage <stage>        Stage name
+-r, --region <region>      Region
+-e, --environment <env>    Environment Variables to embed as key-value pairs
+--dry-run                  Simply generate files that would be used to update the stack and API
+--exclude [list]           Packages to exclude from bundling
+--clean                    Force a clean build where cached bundles are not used
+--no-color                 Turn off ANSI coloring in output
+```
 
 ### Lambda Configuration
 
@@ -233,6 +253,16 @@ In any of these cases, an event file is located as follows:
 
 By default, the event file is assumed to be `event.json` and the timeout is set to 6 seconds. The environment is empty (i.e the running environment is not mirrored).
 
+### Options
+
+```
+-h, --help                  output usage information
+-e, --event <file>          Path to the event JSON file, defaults to 'event.json'
+--env, --environment <env>  Environment Variables to embed as key-value pairs
+-t, --timeout <timeout>     Timeout value for the Lambda function
+--no-color                  Turn off ANSI coloring in output
+```
+
 ## Run
 
 ```
@@ -242,6 +272,17 @@ lambda run [options]
 Running a service locally. This should be used strictly for development purposes as the code that simulates AWS is imperfect (at best) and is not guaranteed to respond similarly to the actual Lambda environment. It does however do its best to allow locally debugging lambda functions sitting behind an API gateway.
 
 The command starts a local server, which parses the API spec (defaults to `./api.json`) and creates appropriate routes, all invalid routes return `404`. The server also mimics AWS's logic in creating the integration (i.e it maps the incoming HTTP request into an AWS Lambda integration), as well as mapping the result of the Lambda function into an appropriate HTTP response.
+
+### Options
+
+```
+-h, --help               output usage information
+-p, --port <number>      Port to use locally
+-a, --api-file <file>    Path to Swagger API spec (defaults to "./api.json")
+-e, --environment <env>  Environment Variables to embed as key-value pairs
+--mirror-environment     Mirror the environment visible to lambda-tools in the lambda functions
+--no-color               Turn off ANSI coloring in output
+```
 
 ### Note about execution
 
