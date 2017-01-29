@@ -97,12 +97,22 @@ The actions the user executing the scripts should be able to perform are:
 5. `describe`
     1. N/A
 
-### Setup
+## Setup
 
 This step should only ever be run once for AWS account, region and LT version combination. The step will create the necessary Lambda functions that act as the CloudFormation resources for all stacks created by lambda-tools. If no region is defined, `us-east-1` is assumed. This also creates the staging S3 bucket that is used to store all stack assets. **If this step is not done, all deployments will fail**.
 
+Since the deployed Lambda code is held in S3 buckets and S3 bucket names must be unique across all accounts, deploys will fail unless you provide an unique resource name prefix when running the `setup` command via the resource prefix option described below.
+
 ```
 lambda setup [options]
+```
+
+### Options
+```
+-h, --help                      output usage information
+-r, --region <string>           Region to setup in, if not set otherwise, defaults to 'us-east-1'
+-p, --resource-prefix <string>  Prefix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
+--no-color                      Turn off ANSI coloring in output
 ```
 
 ## Describe
