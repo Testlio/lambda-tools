@@ -51,7 +51,6 @@
     "koa-router": "^5.3.0",
     "lodash": "^4.8.x",
     "moment": "^2.11.0",
-    "node-uuid": "^1.4.7",
     "perfy": "^1.1.2",
     "readline-sync": "^1.2.21",
     "resolve": "^1.1.7",
@@ -59,6 +58,7 @@
     "swagger-parser": "^3.3.0",
     "untildify": "^2.1.0",
     "update-notifier": "^0.7.0",
+    "uuid": "^3.0.0",
     "velocityjs": "^0.7.5"
   },
   "devDependencies": {
