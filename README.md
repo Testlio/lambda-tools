@@ -269,7 +269,8 @@ By default, the event file is assumed to be `event.json` and the timeout is set 
 -h, --help                  output usage information
 -e, --event <file>          Path to the event JSON file, defaults to 'event.json'
 --env, --environment <env>  Environment Variables to embed as key-value pairs
--t, --timeout <timeout>     Timeout value for the Lambda function
+--timeout <timeout>         Timeout value for the Lambda function
+--ignore-timeout            Ignore Lambda function timeout
 --no-color                  Turn off ANSI coloring in output
 ```
 
@@ -291,6 +292,8 @@ The command starts a local server, which parses the API spec (defaults to `./api
 -a, --api-file <file>    Path to Swagger API spec (defaults to "./api.json")
 -e, --environment <env>  Environment Variables to embed as key-value pairs
 --mirror-environment     Mirror the environment visible to lambda-tools in the lambda functions
+--timeout <number>       Timeout value for the Lambda functions (in seconds), overrides any function specific configuration
+--ignore-timeout         Ignore Lambda function timeouts, overrides any function specific configuration
 --no-color               Turn off ANSI coloring in output
 ```
 
