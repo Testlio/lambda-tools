@@ -21,7 +21,8 @@ program
     .usage('[options] <lambda-file>')
     .option('-e, --event <file>', 'Path to the event JSON file, defaults to \'event.json\'', parsePath, 'event.json')
     .option('--env, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
-    .option('-t, --timeout <timeout>', 'Timeout value for the Lambda function', 6)
+    .option('--timeout <timeout>', 'Timeout value for the Lambda function', parseInt)
+    .option('--ignore-timeout', 'Ignore Lambda function timeout')
     .option('--no-color', 'Turn off ANSI coloring in output');
 
 program.on('--help', function() {
@@ -41,7 +42,10 @@ program.on('--help', function() {
     console.log('    $ lambda execute index.js --env NODE_ENV=test,FOO=bar');
     console.log();
     console.log('    Execute function \'foo\' with a custom timeout of 60s');
-    console.log('    $ lambda execute foo -t 60');
+    console.log('    $ lambda execute foo --timeout 60');
+    console.log();
+    console.log('    Execute function \'foo\' with no timeout');
+    console.log('    $ lambda execute foo --ignore-timeout');
     console.log();
 });
 
@@ -92,7 +96,10 @@ if (program.args.length === 0) {
             if (fsx.fileExists(propertiesFile)) {
                 const handlerFile = fsx.readJSONFileSync(propertiesFile);
                 const handler = _.get(handlerFile, 'Properties.Handler', 'index.handler');
-                program.timeout = parseInt(_.get(handlerFile, 'Properties.Timeout', program.timeout), 10);
+
+                if (_.isUndefined(program.timeout)) {
+                    program.timeout = parseInt(_.get(handlerFile, 'Properties.Timeout'), 10);
+                }
 
                 assets = _.get(handlerFile, 'Assets', {});
 
@@ -107,6 +114,15 @@ if (program.args.length === 0) {
             process.exit(1);
         }
     }
+}
+
+// Determine the final timeout (if ignored, then ignore, otherwise make sure
+// some meaningful default is in place if the function configuration/option didn't
+// specify anything)
+if (program.ignoreTimeout) {
+    program.timeout = 0;
+} else if (_.isUndefined(program.timeout)) {
+    program.timeout = 6;
 }
 
 // Load event (if one was provided or exists at CWD/event.json)

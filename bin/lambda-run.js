@@ -26,10 +26,12 @@ const cwd = process.cwd();
 //
 
 program
-    .option('-p, --port <number>', 'Port to use locally', 3000)
+    .option('-p, --port <n>', 'Port to use locally', parseInt, 3000)
     .option('-a, --api-file <file>', 'Path to Swagger API spec (defaults to "./api.json")', parsePath, path.resolve(cwd, 'api.json'))
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
     .option('--mirror-environment', 'Mirror the environment visible to lambda-tools in the lambda functions')
+    .option('--ignore-timeout', 'Ignore Lambda function timeouts')
+    .option('--timeout <seconds>', 'Fixed timeout (in seconds) for Lambda functions', parseInt)
     .option('--no-color', 'Turn off ANSI coloring in output');
 
 program.on('--help', function() {
@@ -47,6 +49,12 @@ program.on('--help', function() {
     console.log();
     console.log('    Run service mirroring current process\' environment variables to Lambda functions');
     console.log('    $ lambda run --mirror-environment');
+    console.log();
+    console.log('    Run service with fixed timeout of 8 seconds for Lambda functions');
+    console.log('    $ lambda run --timeout 8');
+    console.log();
+    console.log('    Run service ignoring any timeouts of Lambda functions');
+    console.log('    $ lambda run --ignore-timeout');
     console.log();
 });
 
