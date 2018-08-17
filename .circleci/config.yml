@@ -3,22 +3,38 @@ workflows:
   version: 2
   install-test-publish:
     jobs:
-      - install-dependencies
+      - install-dependencies:
+          filters:
+            tags:
+              only: /.*/
       - test:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - install-dependencies
       - lint:
+          filters:
+            tags:
+              only: /.*/
           requires:
             - install-dependencies
       - approve-publish-npm:
           type: approval
           filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
             branches:
-              only: master
+              ignore: /.*/
           requires:
             - test
             - lint
       - publish-npm:
+          filters:
+            tags:
+              only: /v[0-9]+(\.[0-9]+)*/
+            branches:
+              ignore: /.*/
           requires:
             -  approve-publish-npm
 
@@ -45,8 +61,8 @@ jobs:
           paths:
             - node_modules
       - persist_to_workspace:
-          root: ~/builds
-          paths: .
+          root: .
+          paths: node_modules
 
   test:
     <<: *default
