@@ -1,0 +1,85 @@
+version: 2
+workflows:
+  version: 2
+  install-test-publish:
+    jobs:
+      - install-dependencies
+      - test:
+          requires:
+            - install-dependencies
+      - lint:
+          requires:
+            - install-dependencies
+      - approve-publish-npm:
+          type: approval
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
+            - lint
+      - publish-npm:
+          requires:
+            -  approve-publish-npm
+
+defaults:
+  docker: &default
+    working_directory: ~/builds
+    docker:
+      - image: circleci/node:6
+
+jobs:
+  install-dependencies:
+    <<: *default
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+           - dependencies-cache-{{ checksum "package.json" }}
+           - dependencies-cache-
+      - run:
+          name: Install dependencies
+          command: npm install --no-save
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: ~/builds
+          paths: .
+
+  test:
+    <<: *default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/builds
+      - run:
+          name: Run tests
+          command:
+            npm test
+
+  lint:
+    <<: *default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/builds
+      - run:
+          name: Run linter
+          command:
+            npm run lint
+
+  publish-npm:
+    <<: *default
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/builds
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/builds/.npmrc
+      - run:
+          name: Publish package
+          command:
+            npm publish
