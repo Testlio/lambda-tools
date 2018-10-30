@@ -51,15 +51,23 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-           - dependencies-cache-{{ checksum "package.json" }}
+           - dependencies-cache-{{ checksum "yarn.lock" }}
            - dependencies-cache-
       - run:
+          name: Install yarn
+          command: >
+           sudo apt-get install apt-transport-https &&
+           curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - &&
+           echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list &&
+           sudo apt-get update &&
+           sudo apt-get install --no-install-recommends yarn
+      - run:
           name: Install dependencies
-          command: npm install --no-save
+          command: yarn
       - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
+          key: dependency-cache-{{ checksum "yarn.lock" }}
           paths:
-            - node_modules
+            - ~/.cache/yarn
       - persist_to_workspace:
           root: .
           paths: node_modules
