@@ -1,6 +1,6 @@
 {
     "rules": {
-        "indent": [2, 4],
+        "indent": "off",
         "linebreak-style": [2, "unix"],
         "semi": [2, "always"],
         "no-undef": [2],
@@ -14,7 +14,9 @@
         "no-var": [2],
         "no-const-assign": [2],
         "prefer-const": [2],
-        "no-console": [0]
+        "no-console": [0],
+        "require-yield": "off",
+        "no-useless-escape": "off"
     },
     "env": {
         "es6": true,
