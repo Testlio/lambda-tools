@@ -42,7 +42,7 @@ defaults:
   docker: &default
     working_directory: ~/builds
     docker:
-      - image: circleci/node:8
+      - image: circleci/node:12
 
 jobs:
   install-dependencies:
