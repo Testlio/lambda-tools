@@ -1,6 +1,6 @@
 {
   "name": "lambda-tools",
-  "version": "3.4.6",
+  "version": "3.4.7",
   "description": "Scripts for working with AWS Lambda backed microservices",
   "main": "",
   "scripts": {
@@ -25,6 +25,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.7.5",
     "ansi": "^0.3.1",
     "archy": "^1.0.0",
     "aws-sdk": "^2.3.x",
@@ -46,7 +47,7 @@
     "exorcist": "^0.4.0",
     "find-root": "^1.0.0",
     "fs-extra": "^0.26.7",
-    "graceful-fs": "^4.1.4",
+    "graceful-fs": "^4.2.3",
     "hash-files": "^1.1.1",
     "jsonpath": "^1.0.1",
     "koa": "^1.1.2",
