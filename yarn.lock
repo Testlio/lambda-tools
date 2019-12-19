@@ -2194,7 +2194,7 @@ fstream@~0.1.21:
   resolved "https://registry.yarnpkg.com/fstream/-/fstream-0.1.31.tgz#7337f058fbbbbefa8c9f561a28cab0849202c988"
   integrity sha1-czfwWPu7vvqMn1YaKMqwhJICyYg=
   dependencies:
-    graceful-fs "^4.1.2"
+    graceful-fs "~3.0.2"
     inherits "~2.0.0"
     mkdirp "0.5"
     rimraf "2"
@@ -2276,10 +2276,10 @@ got@^5.0.0:
     unzip-response "^1.0.2"
     url-parse-lax "^1.0.0"
 
-graceful-fs@^4.1.0, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.3:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
-  integrity sha512-a30VEBm4PEdx1dRB7MFK7BejejvCvBronbLjht+sHuGYj8PHs7M/5Z+rt5lw551vZ7yfTCj4Vuyy3mSJytDWRQ==
+graceful-fs@4.1.9, graceful-fs@^4.1.0, graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@~3.0.2:
+  version "4.1.9"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.9.tgz#baacba37d19d11f9d146d3578bc99958c3787e29"
+  integrity sha1-uqy6N9GdEfnRRtNXi8mZWMN4fik=
 
 has-ansi@^2.0.0:
   version "2.0.0"
