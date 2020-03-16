@@ -13,8 +13,8 @@ const createResources = require('../lib/setup/create-cf-resources.js');
 
 program
     .option('-r, --region <string>', 'Region to setup in, if not set otherwise, defaults to \'us-east-1\'')
-    .option('-p, --resource-prefix <string>', 'Prefix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
-    .option('-s, --resource-suffix <string>', 'Suffix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
+    .option('-rp, --resource-prefix <string>', 'Prefix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
+    .option('-rs, --resource-suffix <string>', 'Suffix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
     .option('--no-color', 'Turn off ANSI coloring in output')
     .parse(process.argv);
 
