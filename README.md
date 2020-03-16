@@ -111,8 +111,8 @@ lambda setup [options]
 ```
 -h, --help                      output usage information
 -r, --region <string>           Region to setup in, if not set otherwise, defaults to 'us-east-1'
--p, --resource-prefix <string>  Prefix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
--s, --resource-suffix <string>  Suffix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
+-rp, --resource-prefix <string>  Prefix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
+-rs, --resource-suffix <string>  Suffix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
 --no-color                      Turn off ANSI coloring in output
 ```
 
@@ -154,15 +154,17 @@ Deployment of a service to AWS, goes through multiple steps during the process:
 ### Options
 
 ```
--h, --help                 output usage information
--n, --project-name <name>  Project name
--s, --stage <stage>        Stage name
--r, --region <region>      Region
--e, --environment <env>    Environment Variables to embed as key-value pairs
---dry-run                  Simply generate files that would be used to update the stack and API
---exclude [list]           Packages to exclude from bundling
---clean                    Force a clean build where cached bundles are not used
---no-color                 Turn off ANSI coloring in output
+-h, --help                      Output usage information
+-n, --project-name <name>       Project name
+-s, --stage <stage>             Stage name
+-r, --region <region>           Region
+-e, --environment <env>         Environment Variables to embed as key-value pairs
+-rp, --resource-prefix <prefix> Prefix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
+-rs, --resource-suffix <suffix> Suffix to use with all lambda-tools created AWS resources, defaults to '' (empty string)
+--dry-run                       Simply generate files that would be used to update the stack and API
+--exclude [list]                Packages to exclude from bundling
+--clean                         Force a clean build where cached bundles are not used
+--no-color                      Turn off ANSI coloring in output
 ```
 
 ### Lambda Configuration
