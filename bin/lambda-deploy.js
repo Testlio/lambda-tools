@@ -12,16 +12,8 @@ const prompt = require('readline-sync');
 const _ = require('lodash');
 
 const pkg = require('../package.json');
-const config = require('../lib/helpers/config');
 const hype = require('../lib/helpers/lambdahype');
 const logger = require('../lib/helpers/logger').shared;
-
-const setup = require('../lib/deploy/setup-step');
-const processing = require('../lib/deploy/bundle-lambdas-step');
-const deriveAPI = require('../lib/deploy/derive-api-step');
-const deriveStack = require('../lib/deploy/derive-stack-step');
-const fetchStack = require('../lib/deploy/fetch-stack-step');
-const deployStack = require('../lib/deploy/update-stack-step');
 
 //
 //  Program specification
@@ -32,8 +24,8 @@ program
     .option('-s, --stage <stage>', 'Stage name')
     .option('-r, --region <region>', 'Region')
     .option('-e, --environment <env>', 'Environment Variables to embed as key-value pairs', parseEnvironment, {})
-    .option('-rp, --resource-prefix <prefix>', 'Prefix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
-    .option('-rs, --resource-suffix <suffix>', 'Suffix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
+    .option('--resource-prefix <prefix>', 'Prefix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
+    .option('--resource-suffix <suffix>', 'Suffix to use with all lambda-tools created AWS resources, defaults to \'\' (empty string)')
     .option('--dry-run', 'Simply generate files that would be used to update the stack and API')
     .option('--exclude [list]', 'Packages to exclude from bundling', function(val) { return val.split(','); })
     .option('--clean', 'Force a clean build where cached bundles are not used')
@@ -63,6 +55,26 @@ program.parse(process.argv);
 // Configure program
 //
 
+// Setup configStore
+const conf = new Configstore(pkg.name);
+if (program.resourcePrefix) {
+    logger.log(`Setting resource prefix to ${chalk.underline(program.resourcePrefix)}`);
+    conf.set('ResourcePrefix', program.resourcePrefix);
+}
+if (program.resourceSuffix) {
+    logger.log(`Setting resource suffix to ${chalk.underline(program.resourceSuffix)}`);
+    conf.set('ResourceSuffix', program.resourceSuffix);
+}
+
+// Load default config & other functions
+const config = require('../lib/helpers/config');
+const setup = require('../lib/deploy/setup-step');
+const processing = require('../lib/deploy/bundle-lambdas-step');
+const deriveAPI = require('../lib/deploy/derive-api-step');
+const deriveStack = require('../lib/deploy/derive-stack-step');
+const fetchStack = require('../lib/deploy/fetch-stack-step');
+const deployStack = require('../lib/deploy/update-stack-step');
+
 // Enable/Disable colors
 chalk.enabled = program.color;
 
@@ -78,17 +90,6 @@ AWS.config.region = program.region;
 program.environment["AWS_REGION"] = program.region;
 program.environment["AWS_STAGE"] = program.stage;
 program.environment["AWS_PROJECT_NAME"] = program.projectName;
-
-// Setup configStore
-const conf = new Configstore(pkg.name);
-if (program.resourcePrefix) {
-  logger.log(`Setting resource prefix to ${chalk.underline(program.resourcePrefix)}`);
-  conf.set('ResourcePrefix', program.resourcePrefix);
-}
-if (program.resourceSuffix) {
-  logger.log(`Setting resource suffix to ${chalk.underline(program.resourceSuffix)}`);
-  conf.set('ResourceSuffix', program.resourceSuffix);
-}
 
 //
 // Main logic
