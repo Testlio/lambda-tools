@@ -22,5 +22,13 @@
         "es6": true,
         "node": true
     },
-    "extends": "eslint:recommended"
+    "parserOptions": {
+        "ecmaVersion": 11,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true
+        }
+    },
+    "extends": "eslint:recommended",
+    "root": true
 }
