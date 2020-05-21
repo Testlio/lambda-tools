@@ -87,17 +87,16 @@ if (config.project.name && !program.environment["AWS_PROJECT_NAME"]) {
     program.environment["AWS_PROJECT_NAME"] = config.project.name;
 }
 
-function * genericErrorHandler(next) {
-    // Generic error handler
+const genericErrorHandler = async(ctx, next) => {
     try {
-        yield next;
+        await next();
     } catch (innerError) {
-        this.status = innerError.status || 500;
-        this.body = innerError.message;
+        ctx.status = innerError.status || 500;
+        ctx.body = innerError.message;
         console.error(innerError.stack);
         console.error(innerError.message);
     }
-}
+};
 
 let server;
 function restartServer(apiFile, port) {
@@ -132,7 +131,7 @@ function restartServer(apiFile, port) {
                 });
             });
 
-            const app = koaApp();
+            const app = new koaApp();
             const logger = koaLogger();
             const parser = koaParser();
 
