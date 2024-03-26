@@ -58,7 +58,7 @@
     "perfy": "^1.1.2",
     "readline-sync": "^1.2.21",
     "resolve": "^1.1.7",
-    "simple-archiver": "^0.2.0",
+    "adm-zip": "^0.5.12",
     "swagger-parser": "^3.3.0",
     "untildify": "^2.1.0",
     "update-notifier": "^0.7.0",
@@ -66,7 +66,7 @@
     "velocityjs": "^0.7.5"
   },
   "resolutions": {
-    "graceful-fs": "4.1.9"
+    "graceful-fs": "4.2.11"
   },
   "devDependencies": {
     "eslint": "7.0.0"
